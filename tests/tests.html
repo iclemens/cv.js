@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>Demo</title>
+        
+        <meta charset="utf-8">
+
+        <link rel="stylesheet" href="node_modules/qunitjs/qunit/qunit.css"></link>
+
+        <script type="text/javascript" src="node_modules/systemjs/dist/system.src.js"></script>
+        <script src="systemjs.config.js"></script>   
+    </head>
+    <body>
+        <canvas id="output" width="3" height="3" style="border: 1px solid red; background: black;"></canvas>
+
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+
+        <script>
+/*            requirejs(['QUnit', 'CV', 'Grayscale', 'Scale', 
+                'FAST', 'BRISK', 'Sobel', 'Canny', 'RGBToHSV'], function(QUnit, CV, Grayscale, Scale, FAST, BRISK, Sobel, Canny, RGBToHSV) {                       */
+
+            Promise.all([
+                System.import('QUnit'),
+                System.import('tests/Grayscale'),
+                System.import('tests/Scale'),
+                System.import('tests/FAST'),
+                System.import('tests/BRISK'),
+                System.import('tests/Sobel'),
+                System.import('tests/Canny'),
+                System.import('tests/RGBToHSV')
+            ]).then((modules) => {
+                QUnit = modules[0];
+
+                modules[1].run(); // Grayscale
+                modules[2].run(); // Scale
+                modules[3].run(); // FAST
+                modules[4].run(); // BRISK
+                modules[5].run(); // Sobel
+                modules[6].run(); // Canny
+                modules[7].run(); // RGBToHSV
+                
+                QUnit.load();
+                QUnit.start();
+            });            
+        </script>
+    </body>
+</html>
+    

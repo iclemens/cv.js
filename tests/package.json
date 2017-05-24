@@ -1,0 +1,19 @@
+{
+  "name": "tests",
+  "version": "0.1.3",
+  "description": "",
+  "main": "bug.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@iclemens/cv": "^0.1.3",
+    "@iclemens/rxcv": "^0.1.3",
+    "http-server": "^0.10.0",
+    "jquery": "^3.2.1",
+    "qunit": "^1.0.0",
+    "systemjs": "^0.20.12"
+  }
+}
