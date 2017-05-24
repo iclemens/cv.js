@@ -1,1 +1,2 @@
 
+This repository contains a computer vision library for JavaScript. Its API was inspired by OpenCV. In addition a Reactive version is included which was inspired by [Bonsai](https://bitbucket.org/horizongir/bonsai).
