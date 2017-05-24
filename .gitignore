@@ -49,6 +49,9 @@ Temporary Items
 # Visual Studio
 .vscode
 
+demo/dist
+demo/node_modules
+
 cv/dist
 cv/node_modules
 
