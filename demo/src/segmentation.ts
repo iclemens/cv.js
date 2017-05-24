@@ -10,7 +10,7 @@ import { Blur } from '@iclemens/rxcv'
 import { Scale } from '@iclemens/rxcv'
 import { FAST } from '@iclemens/rxcv'
 import { BRISK } from '@iclemens/rxcv'
-import { Canny } from '@iclemens/rxcv'
+import { Sobel } from '@iclemens/rxcv'
 
 declare function algorithm0(pointCloud);
 declare function widestGap(M);
@@ -51,51 +51,26 @@ for(var i = 0; i < video_canvas_ids.length; i++) {
 // Setup shared part of the processing pipe-line    
 var grayscale = new Grayscale();
 var blur = new Blur();
+var sobel = new Sobel();
 
 
-var sharedInput = grayscale.Process(cameraSource).share();
+var cameraSource = cameraCapture.Source().share();
+
 
 video_canvas_sinks[0].Process(cameraSource).subscribe(function() {
     feature_canvases[0].width = video_canvas_sinks[0].element.width;
     feature_canvases[0].height = video_canvas_sinks[0].element.height;
 });
 
-var scales = [1.0/2.0, 1.0/4.0, 1.0/8.0, 1.0/16.0, 1.0/32.0];
-var scalers = [];
-var featureDetectors = [];
 var featureObservables = [];
 
-// Setup scaled versions of pipeline
-/*for(var i = 0; i < scales.length; i++) {
-    let scale = scales[i];
-    scalers[i] = new Scale();
-    scalers[i].setScale(scales[i]);
-
-    featureDetectors[i] = new FAST();
-    featureDetectors[i].setS(12);
-    featureDetectors[i].setT(15);
-    featureDetectors[i].setNonMaxSupp(false);
-
-    featureObservables[i] = featureDetectors[i]
-        .Process(scalers[i].Process(sharedInput))
-        .map(
-            function(features) {
-                features.forEach(element => {
-                    element.x /= scale;
-                    element.y /= scale;
-                });
-                
-                return features;
-            }
-    )   
-}*/
-
-var scale = 1.0/8.0;
+var scale = 1.0/4.0;
 var scaler = new Scale();
 scaler.setScale(scale);
 
-var canny = new Canny();
-featureObservables[0] = canny.Process( scaler.Process(sharedInput) ).map((image): any => {
+var inputImage =  sobel.Process(grayscale.Process( scaler.Process( cameraSource ) ));
+
+featureObservables[0] = inputImage.map((image): any => {
     var image_data = image.asImageData();
     var data = image_data.getUint8Array();
 
@@ -103,9 +78,9 @@ featureObservables[0] = canny.Process( scaler.Process(sharedInput) ).map((image)
     var h = image_data.height;
     var points: any[] = [];
 
-    for(var x = 0; x < w; x++) {
-        for(var y = 0; y < h; y++) {
-            if(data[x * 4 + y * w * 4 + 2] == 255)
+    for(var x = 20; x < w - 20; x++) {
+        for(var y = 20; y < h - 20; y++) {
+            if(data[x * 4 + y * w * 4] > 100 || data[x * 4 + y * w * 4 + 1] > 100)
                 points.push({x: x/scale, 
                     y: y/scale})
         }
@@ -130,6 +105,9 @@ Observable.combineLatest(featureObservables).subscribe(function(features) {
 
     var M = algorithm0(pointCloud);      
     var w = widestGap(M);
+
+    if(w == undefined) return;
+
     var Mp = mSegmentation(M, w.pointsAbove);
 
     var triangles = triangulate(pointCloud);
