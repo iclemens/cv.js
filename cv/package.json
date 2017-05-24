@@ -1,10 +1,10 @@
 {
   "name": "@iclemens/cv",
-  "version": "0.1.0",
-  "description": "Computer Vision API",
+  "version": "0.1.1",
+  "description": "Computer Vision",
   "main": "dist/CV.js",
   "typings": "dist/CV.d.ts",
-  "repository": "",
+  "repository": "https://github.com/iclemens/cv.js.git",
   "scripts": {
     "preinstall": "",
     "postinstall": "",

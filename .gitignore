@@ -48,3 +48,9 @@ Temporary Items
 
 # Visual Studio
 .vscode
+
+cv/dist
+cv/node_modules
+
+rxcv/dist
+rxcv/node_modules
