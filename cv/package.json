@@ -1,7 +1,7 @@
 {
   "name": "@iclemens/cv",
   "version": "0.1.1",
-  "description": "Computer Vision",
+  "description": "Computer Vision Library",
   "main": "dist/CV.js",
   "typings": "dist/CV.d.ts",
   "repository": "https://github.com/iclemens/cv.js.git",
