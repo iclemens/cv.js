@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <title>Feature detection</title>
+        
+        <meta charset="utf-8">
+
+        <script type="text/javascript" src="node_modules/systemjs/dist/system.src.js"></script>
+        <script src="systemjs.config.js"></script>
+
+        <link href='http://fonts.googleapis.com/css?family=Lato&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        
+
+        <script type="text/javascript" src="persistence/delaunay.js"></script>
+        <script type="text/javascript" src="persistence/utilities.js"></script>
+        <script type="text/javascript" src="persistence/alg1_v3.js"></script>
+
+        <style>
+          body {
+            margin: 50px;
+          }
+          h1 { 
+            font-family: Lato;             
+          }
+          div {
+            font-family: Lato;
+            font-size: 14pt;
+            margin-bottom: 10px;
+          }
+        </style>      
+    </head>
+    <body>
+        <h1>Real-time segmentation</h1>
+      
+        <div>Demo.</div>  
+      
+        <div style="position: relative; height: 400px;">
+            <canvas id="video" width="3" height="3" style="position: absolute; top: 0; left: 0; border: 1px solid red; background: black;"></canvas>
+            <canvas id="features" width="3" height="3" style="position: absolute; top: 0; left: 0; border: 1px solid blue;"></canvas>
+        </div>
+        
+        <script>
+            System.import('app/segmentation').then((features) => {
+            }, (error) => console.log(error));
+        </script>
+    </body>
+</html>

@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>Pupil tracking demo</title>
+        
+        <meta charset="utf-8">
+
+        <script type="text/javascript" src="node_modules/systemjs/dist/system.src.js"></script>
+        <script src="systemjs.config.js"></script>
+
+        <link href='http://fonts.googleapis.com/css?family=Lato&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+        <script type="text/javascript" src="js/haar.js"></script>
+        <script type="text/javascript" src="js/pupil.js"></script>
+        
+        <style>
+          body {
+            margin: 50px;
+          }
+          h1 { 
+            font-family: Lato;             
+          }
+          div {
+            font-family: Lato;
+            font-size: 14pt;
+            margin-bottom: 10px;
+          }
+        </style>      
+    </head>
+    <body>
+        <h1>Pupil tracking demo</h1>
+      
+        <div>Web-based pupil tracking.</div>
+      
+        <div style="position: relative; height: 480px; width: 640px; float: left">
+            <canvas id="video" width="3" height="3" style="position: absolute; top: 0; left: 0; border: 1px solid red; background: black;"></canvas>
+            <canvas id="features" width="3" height="3" style="position: absolute; top: 0; left: 0; border: 1px solid blue;"></canvas>
+        </div>
+
+        <canvas id="eyeL" style="border: 1px solid green; width: 100px" width="50" height="43"></canvas>
+        <canvas id="eyeR" style="border: 1px solid green; width: 100px" width="50" height="43"></canvas>
+
+<script>
+    System.import('app/pupil').then((pupil) => {
+    }, (error) => console.log(error));
+</script>
+    </body>
+</html>
