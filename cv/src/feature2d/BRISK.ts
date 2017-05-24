@@ -1026,7 +1026,7 @@ export class BRISK
         var features = [];
         for(var i = 0; i < this._layers.length; i++) {
             var layerFeatures = this._layers[i].getFeatures();
-            console.log("Raw keypoints in layer", i, layerFeatures.length);
+            //console.log("Raw keypoints in layer", i, layerFeatures.length);
             
             Array.prototype.push.apply(features, layerFeatures);
         }
