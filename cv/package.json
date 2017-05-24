@@ -1,0 +1,28 @@
+{
+  "name": "@iclemens/cv",
+  "version": "0.1.0",
+  "description": "Computer Vision API",
+  "main": "dist/CV.js",
+  "typings": "dist/CV.d.ts",
+  "repository": "",
+  "scripts": {
+    "preinstall": "",
+    "postinstall": "",
+    "prepublish": "grunt && tsc"
+  },
+  "author": "Ivar Clemens",
+  "license": "SEE LICENSE IN LICENSE",
+  "typescript": {
+    "definition": "dist/CV.d.ts"
+  },
+  "devDependencies": {
+    "glslmin": "0.0.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-uglify": "^1.0.1",
+    "jsesc": "^1.0.0"
+  },
+  "dependencies": {
+    "sax": "^1.2.1",
+    "typedoc": "^0.5.0"
+  }
+}
