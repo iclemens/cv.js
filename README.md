@@ -8,5 +8,7 @@ The original intent was to create an execution environment which allows Bonsai w
 
 Use npm to install the libraries:
 
-```npm install @iclemens/cv --save
-npm install @iclemens/rxcv --save```
+```bash
+npm install @iclemens/cv --save
+npm install @iclemens/rxcv --save
+```
