@@ -1,62 +1,62 @@
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
-import {Image, Keypoint} from '@iclemens/cv'
-import * as CV from "@iclemens/cv"
+import {Image, Keypoint} from '@iclemens/cv';
+import {FAST as CVFAST} from '@iclemens/cv';
 
 export function FAST()
 {
-    var _fast = new CV.FAST();
-    
+    const fast = new CVFAST();
+
     /**
      * Default parameter values
      */
-    _fast.mask = 16;
-    _fast.T = 50;
-    _fast.S = 9;
-    _fast.nms = true;
-    _fast.subpixel = false;
-        
-    
+    fast.mask = 16;
+    fast.T = 50;
+    fast.S = 9;
+    fast.nms = true;
+    fast.subpixel = false;
+
+
     /**
      * Non-maximum suppression.
-     */    
-    this.setNonMaxSupp = function(nms: boolean) { _fast.nms = nms; }
-    
-    
+     */
+    this.setNonMaxSupp = (nms: boolean) => { fast.nms = nms; };
+
+
     /**
      * Use sub-pixel accuracy
      */
-    this.setSubPixel = function(subpixel: boolean) { _fast.subpixel = subpixel; }
-    
-    
+    this.setSubPixel = (subpixel: boolean) => { fast.subpixel = subpixel; };
+
+
     /**
      * Size of segment above/below threshold for
      * a pixel to be considered a corner.
      */
-    this.setS = function(S: number) { _fast.S = S; }
-    
-    
+    this.setS = (S: number) => { fast.S = S; };
+
+
     /**
      * Size of segment above/below threshold for
      * a pixel to be considered a corner.
      */
-    this.setMask = function(mask: number) { _fast.mask = mask; }
-        
-    
+    this.setMask = (mask: number) => { fast.mask = mask; };
+
+
     /**
      * Minimum threshold score for a pixel to
-     * be considered a corner. 
+     * be considered a corner.
      */
-    this.setT = function(T: number) { _fast.T = T; }
-    
-    
-    this.Process = function(source: Observable<Image>): Observable<Keypoint[]> {         
-        return source.map((input) => {            
-            var scores = _fast.getScores(input);           
-            return _fast.getFeatures(scores);
+    this.setT = (T: number) => { fast.T = T; };
+
+
+    this.Process = (source: Observable<Image>): Observable<Keypoint[]> => {
+        return source.map((input) => {
+            const scores = fast.getScores(input);
+            return fast.getFeatures(scores);
         });
-    }
+    };
 }

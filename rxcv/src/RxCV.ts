@@ -1,2 +1,2 @@
-export * from './dom/main'
-export * from './vision/main'
+export * from './dom/main';
+export * from './vision/main';

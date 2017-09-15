@@ -1,38 +1,31 @@
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
-import {Image, Keypoint} from '@iclemens/cv'
-import * as CV from "@iclemens/cv"
+import {BRISK as CVBRISK} from '@iclemens/cv';
+import {Image, Keypoint} from '@iclemens/cv';
 
 export class BRISK
-{    
-    private _BRISK: CV.BRISK;
-    
-    
+{
+    private BRISK: CVBRISK;
+
     constructor()
     {
-        this._BRISK = new CV.BRISK();
+        this.BRISK = new CVBRISK();
     }
-    
-    
-    _T: number;
-    _octaveCount: number = 0;    
-    
-    
-    get T(): number { return this._BRISK.T; }
-    set T(T: number) { this._BRISK.T = T; }
-    
-    get octaveCount(): number { return this._BRISK.octaveCount; }
-    set octaveCount(octaveCount: number) { this._BRISK.octaveCount = octaveCount; }  
 
-    
-    Process(source: Observable<Image>): Observable<Keypoint[]>
-    {        
-        return source.map((input: Image) => {         
-            var features = this._BRISK.getFeatures(input);
+    get T(): number { return this.BRISK.T; }
+    set T(T: number) { this.BRISK.T = T; }
+
+    get octaveCount(): number { return this.BRISK.octaveCount; }
+    set octaveCount(octaveCount: number) { this.BRISK.octaveCount = octaveCount; }
+
+    private Process(source: Observable<Image>): Observable<Keypoint[]>
+    {
+        return source.map((input: Image) => {
+            const features = this.BRISK.getFeatures(input);
             return features;
-        });  
+        });
     }
 }

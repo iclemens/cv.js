@@ -1,32 +1,30 @@
 /**
  * Converts a color image to grayscale.
  */
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
-import {Image, Keypoint} from '@iclemens/cv'
-import * as CV from "@iclemens/cv"
+import {Image, Keypoint} from '@iclemens/cv';
+import * as CV from '@iclemens/cv';
 
 /**
  * Converts an RGB color image to grayscale using a normal function.
  */
 export class Split
 {
-    private _split: CV.Split;    
-    private _channel: number;
-    
-    constructor(channel: number)
+    private split: CV.Split;
+
+    constructor(private channel: number)
     {
-        this._split = new CV.Split();
-        this._channel = channel;
+        this.split = new CV.Split();
     }
-    
-    
-    Process(source: Observable<Image>): Observable<Image> {
+
+
+    public Process(source: Observable<Image>): Observable<Image> {
         return source.map((input: Image) => {
-            return this._split.split(input, this._channel);
+            return this.split.split(input, this.channel);
         });
     }
 }

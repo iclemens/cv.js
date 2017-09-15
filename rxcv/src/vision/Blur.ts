@@ -1,24 +1,24 @@
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
-import {Image, Keypoint} from '@iclemens/cv'
-import * as CV from "@iclemens/cv"
+import {Image, Keypoint} from '@iclemens/cv';
+import {Blur as CVBlur} from '@iclemens/cv';
 
 export class Blur
 {
-    _blur: CV.Blur;
-        
+    private blur: CVBlur;
+
     constructor()
     {
-        this._blur = new CV.Blur();
+        this.blur = new CVBlur();
     }
-    
-    Process(source: Observable<Image>): Observable<Image>
-    {        
+
+    public Process(source: Observable<Image>): Observable<Image>
+    {
         return source.map((input: Image) => {
-            return this._blur.blur(input);
+            return this.blur.blur(input);
         });
     }
 }

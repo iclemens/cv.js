@@ -1,64 +1,62 @@
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
-import {Image, Keypoint} from '@iclemens/cv'
-import * as CV from "@iclemens/cv"
+import {AGAST as CVAGAST} from '@iclemens/cv';
+import {Image, Keypoint} from '@iclemens/cv';
 
 export function AGAST()
 {
-    var _agast = new CV.AGAST();
-    
+    const agast = new CVAGAST();
+
     /**
      * Default parameter values
      */
-    _agast.mask = 16;
-    _agast.T = 50;
-    _agast.S = 9;
-    _agast.nms = true;
-    _agast.subpixel = false;
+    agast.mask = 16;
+    agast.T = 50;
+    agast.S = 9;
+    agast.nms = true;
+    agast.subpixel = false;
 
 
     /**
      * Non-maximum suppression.
-     */    
-    this.setNonMaxSupp = function(nms: boolean) { _agast.nms = nms; }
-    
-    
+     */
+    this.setNonMaxSupp = (nms: boolean) => { agast.nms = nms; };
+
+
     /**
      * Use sub-pixel accuracy
      */
-    this.setSubPixel = function(subpixel: boolean) { _agast.subpixel = subpixel; }
-    
-    
+    this.setSubPixel = (subpixel: boolean) => { agast.subpixel = subpixel; };
+
+
     /**
      * Size of segment above/below threshold for
      * a pixel to be considered a corner.
      */
-    this.setS = function(S: number) { _agast.S = S; }
-    
-    
+    this.setS = (S: number) => { agast.S = S; };
+
+
     /**
      * Size of segment above/below threshold for
      * a pixel to be considered a corner.
      */
-    this.setMask = function(mask: number) { _agast.mask = mask; }
-        
-    
+    this.setMask = (mask: number) => { agast.mask = mask; };
+
+
     /**
      * Minimum threshold score for a pixel to
-     * be considered a corner. 
+     * be considered a corner.
      */
-    this.setT = function(T: number) { _agast.T = T; }
+    this.setT = (T: number) => { agast.T = T; };
 
-    
-    this.Process = function(source: Observable<Image>): Observable<Keypoint[]> {
-        return source.map(function(input: Image) {
-            console.log(_agast.mask, _agast.S, _agast.T);
 
-            var scores = _agast.getScores(input);
-            return _agast.getFeatures(scores);
-        });    
-    }
+    this.Process = (source: Observable<Image>): Observable<Keypoint[]> => {
+        return source.map((input: Image) => {
+            const scores = agast.getScores(input);
+            return agast.getFeatures(scores);
+        });
+    };
 }

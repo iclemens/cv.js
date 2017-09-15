@@ -1,8 +1,8 @@
 /**
  * Converts a color image to grayscale.
  */
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
 import 'rxjs/add/operator/map'
 
