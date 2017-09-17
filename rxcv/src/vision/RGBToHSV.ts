@@ -3,28 +3,53 @@
  */
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
+import {Operator} from 'rxjs/Operator';
+import {Subscriber} from 'rxjs/Subscriber';
+import {TeardownLogic} from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/map';
 
 import {Image, Keypoint} from '@iclemens/cv';
 import {RGBToHSV as CVRGBToHSV} from '@iclemens/cv';
 
-/**
- * Converts an RGB color image to grayscale using a normal function.
- */
-export class RGBToHSV
-{
-    private rgbToHSV: CVRGBToHSV;
+export function rgbToHSV(this: Observable<Image>): Observable<Image> {
+    return this.lift(new RGBToHSVOperator());
+}
 
-    constructor()
-    {
-        this.rgbToHSV = new CVRGBToHSV();
-    }
+Observable.prototype.rgbToHSV = rgbToHSV;
 
-
-    public Process(source: Observable<Image>): Observable<Image> {
-        return source.map((input: Image): Image => {
-            return this.rgbToHSV.rgbToHSV(input);
-        });
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+        rgbToHSV: typeof rgbToHSV;
     }
 }
+
+class RGBToHSVOperator implements Operator<Image, Image>
+{
+    constructor()
+    {
+    }
+
+    public call(subscriber: Subscriber<Image>, source: Observable<Image>): TeardownLogic
+    {
+        return source.subscribe(new RGBToHSVSubscriber(subscriber));
+    }
+}
+
+
+class RGBToHSVSubscriber extends Subscriber<Image>
+{
+    private rgbtohsv: CVRGBToHSV;
+
+    constructor(destination: Subscriber<Image>)
+    {
+        super(destination);
+        this.rgbtohsv = new CVRGBToHSV();
+    }
+
+    protected _next(value: Image): void
+    {
+        this.destination.next(this.rgbtohsv.rgbToHSV(value));
+    }
+}
+

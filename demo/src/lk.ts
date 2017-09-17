@@ -5,11 +5,7 @@ import 'rxjs/add/operator/map'
 import { Image } from '@iclemens/cv'
 import { CameraCapture } from '@iclemens/rxcv'
 import { CanvasSink } from '@iclemens/rxcv'
-import { Grayscale } from '@iclemens/rxcv'
-import { Blur } from '@iclemens/rxcv'
-import { Scale } from '@iclemens/rxcv'
 import { LK } from '@iclemens/cv'
-import { BRISK } from '@iclemens/rxcv'
 import { ScalePyramid } from '@iclemens/cv'
 import * as $ from 'jquery'
 
@@ -80,14 +76,8 @@ var video_canvas_sink = new CanvasSink();
 video_canvas_sink.element = <HTMLCanvasElement> document.getElementById(video_canvas_id);
     
 var lk = new LK(0);
-    
-var grayscale = new Grayscale();
-var blur = new Blur();       
-var brisk = new BRISK();
-brisk.T = 50.0;
-brisk.octaveCount = 5.0;
 
-var sharedInput = grayscale.Process(cameraSource).share();
+var sharedInput = cameraSource.grayscale().share();
 var currentFeatures = [];
 
 function plot_feature(feature, color)

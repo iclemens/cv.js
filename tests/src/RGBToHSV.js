@@ -9,16 +9,15 @@ define(['QUnit', 'tests/Utilities', '@iclemens/cv', '@iclemens/rxcv', 'rxjs'], f
 
                 var referenceImage = new RxCV.LoadImage();
                 referenceImage.url = imageOut;
-                referenceImage = referenceImage.Generate();
+                const referenceImage$ = referenceImage.Generate();
 
                 var originalImage = new RxCV.LoadImage();
                 originalImage.url = imageIn;
-                originalImage = originalImage.Generate();
+                const originalImage$ = originalImage.Generate();
 
-                var rgbToHSV = new RxCV.RGBToHSV();
-                var rgbToHSVImage = rgbToHSV.Process(originalImage)
+                var rgbToHSVImage$ = originalImage$.rgbToHSV();
 
-                Rx.Observable.combineLatest([referenceImage, rgbToHSVImage]).subscribe(function(images) {
+                Rx.Observable.combineLatest([referenceImage$, rgbToHSVImage$]).subscribe(function(images) {
                     var originalI = images[1].asImageData();
                     var referenceI = images[0].asImageData();
 

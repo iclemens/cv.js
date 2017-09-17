@@ -1,31 +1,52 @@
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
+import {Operator} from 'rxjs/Operator';
+import {Subscriber} from 'rxjs/Subscriber';
+import {TeardownLogic} from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/map';
 
 import {BRISK as CVBRISK} from '@iclemens/cv';
 import {Image, Keypoint} from '@iclemens/cv';
 
-export class BRISK
-{
-    private BRISK: CVBRISK;
+Observable.prototype.brisk = brisk;
 
-    constructor()
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+      brisk: typeof brisk;
+    }
+}
+
+export function brisk(this: Observable<Image>, threshold: number, octaveCount: number): Observable<Keypoint[]> {
+    return this.lift(new BRISKOperator(threshold, octaveCount));
+}
+
+class BRISKOperator implements Operator<Image, Keypoint[]>
+{
+    constructor(private threshold: number, private octaveCount: number)
     {
-        this.BRISK = new CVBRISK();
     }
 
-    get T(): number { return this.BRISK.T; }
-    set T(T: number) { this.BRISK.T = T; }
-
-    get octaveCount(): number { return this.BRISK.octaveCount; }
-    set octaveCount(octaveCount: number) { this.BRISK.octaveCount = octaveCount; }
-
-    private Process(source: Observable<Image>): Observable<Keypoint[]>
+    public call(subscriber: Subscriber<Keypoint[]>, source: Observable<Image>): TeardownLogic
     {
-        return source.map((input: Image) => {
-            const features = this.BRISK.getFeatures(input);
-            return features;
-        });
+        return source.subscribe(new BRISKSubscriber(subscriber, this.threshold, this.octaveCount));
+    }
+}
+
+class BRISKSubscriber extends Subscriber<Image>
+{
+    private brisk: CVBRISK;
+
+    constructor(destination: Subscriber<Keypoint[]>, threshold: number, octaveCount: number)
+    {
+        super(destination);
+        this.brisk = new CVBRISK();
+        this.brisk.T = threshold;
+        this.brisk.octaveCount = octaveCount;
+    }
+
+    protected _next(value: Image): void
+    {
+        this.destination.next(this.brisk.getFeatures(value));
     }
 }

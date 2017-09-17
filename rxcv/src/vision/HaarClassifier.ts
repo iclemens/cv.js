@@ -3,36 +3,54 @@
  */
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
+import {Operator} from 'rxjs/Operator';
+import {Subscriber} from 'rxjs/Subscriber';
+import {TeardownLogic} from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/map';
 
 import {Image, Keypoint} from '@iclemens/cv';
 import {CascadeInterface, HaarClassifier as CVHaarClassifier, HaarClassifierShader} from '@iclemens/cv';
 
-/**
- * Converts an RGB color image to grayscale using a normal function.
- */
-export class HaarClassifier
+export function haarClassifier(this: Observable<Image>, cascade: CascadeInterface): Observable<number[][]> {
+    return this.lift(new HaarClassifierOperator(cascade));
+}
+
+Observable.prototype.haarClassifier = haarClassifier;
+
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+        haarClassifier: typeof haarClassifier;
+    }
+}
+
+class HaarClassifierOperator implements Operator<Image, number[][]>
 {
-    private haarClassifier: CVHaarClassifier = undefined;
-    private haarClassifierShader: HaarClassifierShader = undefined;
-
-
-    constructor(cascade: CascadeInterface)
+    constructor(private cascade: CascadeInterface)
     {
-        this.haarClassifier = new CVHaarClassifier(cascade);
-        // this._haarClassifierShader = new CV.HaarClassifierShader();
     }
 
+    public call(subscriber: Subscriber<number[][]>, source: Observable<Image>): TeardownLogic
+    {
+        return source.subscribe(new HaarClassifierSubscriber(subscriber, this.cascade));
+    }
+}
 
-    public Process(source: Observable<Image>): Observable<number[][]> {
-        return source.map((input: Image): number[][] => {
-            this.haarClassifier.setImage(input);
-            const output = this.haarClassifier.detectObject();
 
-            // var output = this._haarClassifierShader.detectObject(input);
-            input.release();
-            return output;
-        });
+class HaarClassifierSubscriber extends Subscriber<Image>
+{
+    private haarClassifier: CVHaarClassifier;
+
+    constructor(destination: Subscriber<number[][]>, cascade: CascadeInterface)
+    {
+        super(destination);
+        this.haarClassifier = new CVHaarClassifier(cascade);
+    }
+
+    protected _next(value: Image): void
+    {
+        this.haarClassifier.setImage(value);
+        this.destination.next(this.haarClassifier.detectObject());
+        value.release();
     }
 }

@@ -1,20 +1,16 @@
-import { Observable } from 'rxjs/Observable'
-import 'rxjs/add/operator/share'
-import 'rxjs/add/operator/map'
-import 'rxjs/add/operator/sample'
-import 'rxjs/add/observable/interval'
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/share';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/sample';
+import 'rxjs/add/observable/interval';
 
 import { Image } from '@iclemens/cv'
 import { CameraCapture } from '@iclemens/rxcv'
 import { CanvasSink } from '@iclemens/rxcv'
-import { Grayscale } from '@iclemens/rxcv'
-import { Blur } from '@iclemens/rxcv'
-import { Scale } from '@iclemens/rxcv'
-import { Split } from '@iclemens/rxcv'
-import { BRISK } from '@iclemens/rxcv'
-import { ScalePyramid } from '@iclemens/cv'
 
-import * as CV from '@iclemens/cv'
+import { ScalePyramid } from '@iclemens/cv';
+
+import * as CV from '@iclemens/cv';
 
 // Functions from haar.js
 declare function drawCentre(context, x, y): void;
@@ -53,8 +49,7 @@ var eyeR_canvas = <HTMLCanvasElement> document.getElementById('eyeR');
 var eyeL_context = eyeL_canvas.getContext('2d');
 var eyeR_context = eyeR_canvas.getContext('2d');
 
-var grayscale = new Split(0);
-var grayscale_image = grayscale.Process(cameraSource).do(retain(1));
+let grayscale_image = cameraSource.split(0).do(retain(1));
 
 var feDetector = new FaceAndEyeDetector(CV);
 var pDetectorL = new PupilDetector(CV, eyeL_context);

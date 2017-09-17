@@ -1,51 +1,66 @@
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
+import {Operator} from 'rxjs/Operator';
+import {Subscriber} from 'rxjs/Subscriber';
+import {TeardownLogic} from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/map';
 
 import {Image, Keypoint} from '@iclemens/cv';
 import {Scale as CVScale} from '@iclemens/cv';
 
-export class Scale
-{
-    private scale: CVScale;
-    private _scaleH: number;
-    private _scaleV: number;
+export function scale(this: Observable<Image>, scaleH?: number, scaleV?: number): Observable<Image> {
+    return this.lift(new ScaleOperator(scaleH, scaleV));
+}
 
-    constructor()
+Observable.prototype.scale = scale;
+
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+      scale: typeof scale;
+    }
+}
+
+class ScaleOperator implements Operator<Image, Image>
+{
+    constructor(private scaleH?: number, private scaleV?: number)
     {
-        this.scale = new CVScale();
     }
 
-    get scaleH(): number { return this._scaleH; }
-    set scaleH(scaleH: number) { this._scaleH = scaleH; }
-
-    get scaleV(): number { return this._scaleV; }
-    set scaleV(scaleV: number) { this._scaleV = scaleV; }
-
-    public setScale(scaleH: number, scaleV?: number): void
+    public call(subscriber: Subscriber<Image>, source: Observable<Image>): TeardownLogic
     {
-        this.scaleH = scaleH;
+        return source.subscribe(new ScaleSubscriber(subscriber, this.scaleH, this.scaleV));
+    }
+}
 
-        if (scaleV === undefined) {
-            this.scaleV = scaleH;
+
+class ScaleSubscriber extends Subscriber<Image>
+{
+    private scale: CVScale;
+
+    constructor(destination: Subscriber<Image>, private scaleH: number, private scaleV?: number)
+    {
+        super(destination);
+        this.scale = new CVScale();
+
+        if (this.scaleV === undefined) {
+            this.scaleV = this.scaleH;
         } else {
-            this.scaleV = scaleV;
+            this.scaleV = this.scaleV;
         }
     }
 
-    public Process(source: Observable<Image>): Observable<Image>
+    protected _next(value: Image): void
     {
-        return source.map((input: Image) => {
-            if (this.scaleH === 1.0 && this.scaleV === 1.0) {
-                return input;
-            }
+        if (this.scaleH === 0 && this.scaleV === 0) {
+            this.destination.next(value);
+            return;
+        }
 
-            // Width/height
-            const w = Math.floor(input.width * this._scaleH);
-            const h = Math.floor(input.height * this._scaleH);
+        const w = Math.floor(value.width * this.scaleV);
+        const h = Math.floor(value.height * this.scaleH);
 
-            return this.scale.scale(input, w, h);
-        });
+        this.destination.next(this.scale.scale(value, w, h));
     }
 }
+

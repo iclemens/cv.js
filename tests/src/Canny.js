@@ -9,18 +9,15 @@ define(['QUnit', 'tests/Utilities', '@iclemens/cv', '@iclemens/rxcv', 'rxjs'], f
 
                 var referenceImage = new RxCV.LoadImage();
                 referenceImage.url = 'reference/canny/lab.grayscale.canny.t100.t200.ap3.false.png';
-                referenceImage = referenceImage.Generate();
+                const referenceImage$ = referenceImage.Generate();
 
                 var originalImage = new RxCV.LoadImage();
                 originalImage.url = 'reference/lab.grayscale.png';
-                originalImage = originalImage.Generate();
+                const originalImage$ = originalImage.Generate();
 
-                var canny = new RxCV.Canny();
-                canny.lowThreshold = 100.0;
-                canny.highThreshold = 200.0;
-                var cannyImage = canny.Process(originalImage);
+                const cannyImage$ = originalImage$.canny(100.0, 200.0);
                 
-                Rx.Observable.combineLatest([referenceImage, cannyImage]).subscribe(function(images) {
+                Rx.Observable.combineLatest([referenceImage$, cannyImage$]).subscribe(function(images) {
                     var original = images[1].asImageData().getImageData();
                     var reference = images[0].asImageData().getImageData();
 

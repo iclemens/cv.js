@@ -3,21 +3,18 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
     function test_brisk_private(assert, octave) { 
         var done = assert.async();
         
-        var referenceFile = "reference/lab.brisk.keypoints.o" + octave + ".json";
+        const referenceFile = "reference/lab.brisk.keypoints.o" + octave + ".json";
         
-        var originalImage = new RxCV.LoadImage();
+        const originalImage = new RxCV.LoadImage();
         originalImage.url = "reference/lab.grayscale.png";
-        originalImage = originalImage.Generate();
+        const originalImage$ = originalImage.Generate();
 
         var canvasSink = new RxCV.CanvasSink();
         canvasSink.element = document.getElementById('output');
 
-        var brisk = new RxCV.BRISK();
-        brisk.T = 50;
-        brisk.octaveCount = octave;   
-        brisk = brisk.Process(originalImage);
+        const brisk$ = originalImage$.brisk(50.0, octave);
         
-        var reference = Rx.Observable.create(function(observer) {
+        const reference$ = Rx.Observable.create(function(observer) {
             $.get(referenceFile).then(function(result) {
                 observer.next(result);
                 observer.complete();
@@ -26,7 +23,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
             });
         });
         
-        Rx.Observable.combineLatest([brisk, reference]).subscribe(function(input) {
+        Rx.Observable.combineLatest([brisk$, reference$]).subscribe(function(input) {
             console.log("Got: ", input);
             var features = input[0];
             var reference = input[1];

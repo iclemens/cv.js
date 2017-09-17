@@ -1,19 +1,14 @@
-import { Observable } from 'rxjs/Observable'
-import 'rxjs/add/operator/share'
+import { Observable } from 'rxjs/Observable';
 
-import { Image } from '@iclemens/cv'
-import { CameraCapture } from '@iclemens/rxcv'
-import { CanvasSink } from '@iclemens/rxcv'
-import { Grayscale } from '@iclemens/rxcv'
-import { Blur } from '@iclemens/rxcv'
-import { Scale } from '@iclemens/rxcv'
-import { FAST } from '@iclemens/rxcv'
-import { BRISK } from '@iclemens/rxcv'
+import 'rxjs/add/operator/share';
+
+import { Image } from '@iclemens/cv';
+import { CameraCapture } from '@iclemens/rxcv';
+import { CanvasSink } from '@iclemens/rxcv';
+
 
 // Input and transform objects
 var cameraCapture = new CameraCapture();
-var grayscale = new Grayscale();
-var blur = new Blur();
 
 // Request image width following specifications
 var constraints: MediaStreamConstraints = {
@@ -22,7 +17,7 @@ var constraints: MediaStreamConstraints = {
 
 // Open camera and grayscale image
 var cameraSource = cameraCapture.Source(undefined, constraints).share();
-var sharedInput = grayscale.Process(cameraSource).share();
+var sharedInput: Observable<Image> = cameraSource.grayscale().share();
 
 // Setup contexts for feature overlays
 var feature_canvas_ids = ['features'];
@@ -54,22 +49,10 @@ video_canvas_sinks[0].Process(cameraSource).subscribe(function() {
 for(var i = 0; i < 1; i++) {
     (function() {
         var scaleFactor = 1.0 / Math.pow(2.0, i);
-
-        var scale = new Scale();
-        scale.setScale(scaleFactor);
-
-        /*var fast = new FAST();
-        fast.setS(12);
-        fast.setT(15);
-        fast.setNonMaxSupp(false);*/
-
-        var fast = new BRISK();
-        fast.T = 50.0;
-        fast.octaveCount = 5.0;
         
-        var scaledInput = scale.Process(sharedInput);            
+        var scaledInput = sharedInput.scale(scaleFactor);  
         
-        fast.Process(sharedInput).subscribe(function(f) {          
+        sharedInput.fast(50.0, 5.0).subscribe(function(f) {          
             for(var i = 0; i < f.length; i++) {
                 feature_contexts[0].beginPath();
                 feature_contexts[0].arc(f[i].x / scaleFactor, f[i].y / scaleFactor, 5, 0, 2.0 * Math.PI, false);

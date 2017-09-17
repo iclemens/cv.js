@@ -14,27 +14,22 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                 var referenceFile = "reference/" +  method + "/" + "lab." + method + "_" + S + "_" + mask + "_" + T + suffix;
 
                 // Load input image
-                var originalImage = new RxCV.LoadImage();
+                const originalImage = new RxCV.LoadImage();
                 originalImage.url = "reference/lab.grayscale.png";
-                originalImage = originalImage.Generate();
+                const originalImage$ = originalImage.Generate();
 
                 var canvasSink = new RxCV.CanvasSink();
                 canvasSink.element = document.getElementById('output');
 
+                let fast$;
+
                 if(method == "fast") {
-                    var fast = new RxCV.FAST();
+                    fast$ = originalImage$.fast(mask, T, S, nonmax, false);
                 } else if(method == "agast") {
-                    var fast = new RxCV.AGAST();
+                    fast$ = originalImage$.agast(mask, T, S, nonmax, false);
                 }
                 
-                fast.setMask(mask);
-                fast.setSubPixel(false);
-                fast.setS(S);
-                fast.setT(T);
-                fast.setNonMaxSupp(nonmax);        
-                fast = fast.Process(originalImage)
-                
-                var reference = Rx.Observable.create(function(observer) {
+                const reference$ = Rx.Observable.create(function(observer) {
                     $.get(referenceFile).then(function(result) {
                         observer.next(result);
                         observer.complete();
@@ -43,7 +38,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                     });
                 });
                 
-                Rx.Observable.combineLatest([fast, reference]).subscribe(function(input) {
+                Rx.Observable.combineLatest([fast$, reference$]).subscribe(function(input) {
                     var features = input[0];
                     var reference = input[1];
 

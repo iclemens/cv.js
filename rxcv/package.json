@@ -1,6 +1,6 @@
 {
   "name": "@iclemens/rxcv",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Computer Vision Library - Reactive Extensions",
   "main": "dist/RxCV.js",
   "typings": "dist/RxCV.d.ts",

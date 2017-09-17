@@ -3,28 +3,53 @@
  */
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
+import {Operator} from 'rxjs/Operator';
+import {Subscriber} from 'rxjs/Subscriber';
+import {TeardownLogic} from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/map';
 
 import {Image, Keypoint} from '@iclemens/cv';
-import * as CV from '@iclemens/cv';
+import {Split as CVSplit} from '@iclemens/cv';
 
-/**
- * Converts an RGB color image to grayscale using a normal function.
- */
-export class Split
+
+export function split(this: Observable<Image>, channel: number): Observable<Image> {
+    return this.lift(new SplitOperator(channel));
+}
+
+Observable.prototype.split = split;
+
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+      split: typeof split;
+    }
+}
+
+class SplitOperator implements Operator<Image, Image>
 {
-    private split: CV.Split;
-
     constructor(private channel: number)
     {
-        this.split = new CV.Split();
     }
 
+    public call(subscriber: Subscriber<Image>, source: Observable<Image>): TeardownLogic
+    {
+        return source.subscribe(new SplitSubscriber(subscriber, this.channel));
+    }
+}
 
-    public Process(source: Observable<Image>): Observable<Image> {
-        return source.map((input: Image) => {
-            return this.split.split(input, this.channel);
-        });
+
+class SplitSubscriber extends Subscriber<Image>
+{
+    private split: CVSplit;
+
+    constructor(destination: Subscriber<Image>, private channel: number)
+    {
+        super(destination);
+        this.split = new CVSplit();
+    }
+
+    protected _next(value: Image): void
+    {
+        this.destination.next(this.split.split(value, this.channel));
     }
 }

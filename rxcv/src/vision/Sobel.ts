@@ -1,28 +1,51 @@
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
+import {Operator} from 'rxjs/Operator';
+import {Subscriber} from 'rxjs/Subscriber';
+import {TeardownLogic} from 'rxjs/Subscription';
 
 import 'rxjs/add/operator/map';
 
 import {Image, Keypoint} from '@iclemens/cv';
-import * as CV from '@iclemens/cv';
+import {Sobel as CVSobel} from '@iclemens/cv';
 
-export class Sobel
+export function sobel(this: Observable<Image>, kSize?: number): Observable<Image> {
+    return this.lift(new SobelOperator(kSize));
+}
+
+Observable.prototype.sobel = sobel;
+
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+      sobel: typeof sobel;
+    }
+}
+
+class SobelOperator implements Operator<Image, Image>
 {
-    private sobel: CV.Sobel;
-    private _ksize: number = 3;
-
-    constructor()
+    constructor(private kSize?: number)
     {
-        this.sobel = new CV.Sobel();
     }
 
-    get ksize(): number { return this._ksize; }
-    set ksize(ksize: number) { this._ksize = ksize; }
-
-    private Process(source: Observable<Image>): Observable<Image>
+    public call(subscriber: Subscriber<Image>, source: Observable<Image>): TeardownLogic
     {
-        return source.map((input: Image): Image => {
-            return this.sobel.sobel(input, this._ksize);
-        });
+        return source.subscribe(new SobelSubscriber(subscriber, this.kSize));
+    }
+}
+
+
+class SobelSubscriber extends Subscriber<Image>
+{
+    private sobel: CVSobel;
+
+    constructor(destination: Subscriber<Image>, private kSize: number = 3)
+    {
+        super(destination);
+        this.sobel = new CVSobel();
+    }
+
+    protected _next(value: Image): void
+    {
+        this.destination.next(this.sobel.sobel(value, this.kSize));
     }
 }

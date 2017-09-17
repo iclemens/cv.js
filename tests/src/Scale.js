@@ -6,19 +6,17 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
             {
                 var done = assert.async();
 
-                var referenceImage = new RxCV.LoadImage();
+                const referenceImage = new RxCV.LoadImage();
                 referenceImage.url = "reference/lab.grayscale." + name + ".png";
-                referenceImage = referenceImage.Generate();
+                const referenceImage$ = referenceImage.Generate();
 
                 var originalImage = new RxCV.LoadImage();
                 originalImage.url = "reference/lab.grayscale.png";
-                originalImage = originalImage.Generate();
+                const originalImage$ = originalImage.Generate();
 
-                var scale = new RxCV.Scale();
-                scale.setScale(s, s);
-                var scaleImage = scale.Process(originalImage);
+                const scaleImage$ = originalImage$.scale(s, s);
 
-                Rx.Observable.combineLatest([referenceImage, scaleImage]).subscribe(function(images) {
+                Rx.Observable.combineLatest([referenceImage$, scaleImage$]).subscribe(function(images) {
                     var originalI = images[1].asImageData();
                     var referenceI = images[0].asImageData();
                     
