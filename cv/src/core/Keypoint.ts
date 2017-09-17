@@ -1,8 +1,8 @@
 
 export interface Keypoint {
-    octave?: number
-    size?: number
-    
+    octave?: number;
+    size?: number;
+
     x: number;
     y: number;
     xoffset?: number;

@@ -1,30 +1,30 @@
 /**
  * Converts a color image to HSV.
  */
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
-import {Image, Keypoint} from '@iclemens/cv'
-import * as CV from '@iclemens/cv'
+import {Image, Keypoint} from '@iclemens/cv';
+import {RGBToHSV as CVRGBToHSV} from '@iclemens/cv';
 
 /**
  * Converts an RGB color image to grayscale using a normal function.
  */
 export class RGBToHSV
 {
-    private _rgbToHSV: CV.RGBToHSV;    
-    
+    private rgbToHSV: CVRGBToHSV;
+
     constructor()
     {
-        this._rgbToHSV = new CV.RGBToHSV();
+        this.rgbToHSV = new CVRGBToHSV();
     }
-    
-    
-    Process(source: Observable<Image>): Observable<Image> {
+
+
+    public Process(source: Observable<Image>): Observable<Image> {
         return source.map((input: Image): Image => {
-            return this._rgbToHSV.rgbToHSV(input);
+            return this.rgbToHSV.rgbToHSV(input);
         });
     }
 }

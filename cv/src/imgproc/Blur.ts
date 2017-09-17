@@ -1,15 +1,15 @@
-import {Filter, ShaderInfo} from '../core/Filter'
-import {Image} from '../core/Image'
-import {ImagePool} from '../core/ImagePool'
+import {Filter, IShaderInfo} from '../core/Filter';
+import {Image} from '../core/Image';
+import {ImagePool} from '../core/ImagePool';
 
 export class Blur extends Filter
 {
-    protected shaders: ShaderInfo[] = [
+    protected shaders: IShaderInfo[] = [
         {
-            vertexFiles: ['shaders/default.vert.c'], 
-            fragmentFiles: ['shaders/blur.frag.c']
-        }
-    ]
+            fragmentFiles: ['shaders/blur.frag.c'],
+            vertexFiles: ['shaders/default.vert.c'],
+        },
+    ];
 
 
     constructor()

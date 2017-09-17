@@ -1,87 +1,94 @@
-import {Image} from './Image'
-import {ImagePool, ImagePoolInterface} from './ImagePool'
-import {ImageWebGLTexture} from './ImageWebGLTexture'
-import {ComputeManager} from './ComputeManager'
+import {ComputeManager} from './ComputeManager';
+import {Image} from './Image';
+import {ImagePool} from './ImagePool';
+import {ImagePoolInterface} from './ImagePoolInterface';
+import {ImageWebGLTexture} from './ImageWebGLTexture';
 
 /**
  * Image backed by an instance of ImageData.
  */
 export class ImageImageData extends Image
 {
-    private _imageData: ImageData;
-    private _uint8Array: Uint8Array = null;
-    
+    private imageData: ImageData;
+    private uint8Array: Uint8Array = null;
+
     constructor(width: number, height: number, imageData: ImageData = null, pool: ImagePoolInterface = null)
     {
         super(pool);
-        
-        if(imageData !== null) {
-            this._imageData = imageData;
-            
-            if(width === null && height === null) 
+
+        if (imageData !== null) {
+            this.imageData = imageData;
+
+            if (width === null && height === null) {
                 return;
-            
-            if(this._imageData.width !== width ||
-               this._imageData.height !== height) {
-                   throw "ImageImageData(): Payload does not match specified dimensions.";
+            }
+
+            if (this.imageData.width !== width ||
+                this.imageData.height !== height) {
+                   throw new Error('ImageImageData(): Payload does not match specified dimensions.');
                }
         } else {
-            this._imageData = new ImageData(width, height);
+            this.imageData = new ImageData(width, height);
         }
     }
-    
-    
+
     get width(): number
     {
-        return this._imageData.width;
+        return this.imageData.width;
     }
-    
-    
+
     get height(): number
     {
-        return this._imageData.height;
+        return this.imageData.height;
     }
 
-
-    returnImage(): void
+    /**
+     * Returns the image to the pool.
+     */
+    public returnImage(): void
     {
-        if(this._pool)
-            this._pool.returnImageData(this);
+        if (this.pool) {
+            this.pool.returnImageData(this);
+        }
     }
 
+    /**
+     * Convert the image into a WebGL texture.
+     */
+    public asWebGLTexture(): ImageWebGLTexture
+    {
+        const imagePool: ImagePoolInterface = ImagePool.getInstance();
+        const cm = ComputeManager.getInstance();
 
-    asWebGLTexture(): ImageWebGLTexture
-    {          
-        var imagePool: ImagePoolInterface = ImagePool.getInstance();
-        var cm = ComputeManager.getInstance();
-
-        var output = imagePool.getWebGLTexture(this.width, this.height, false, "ImageImageData");
-        cm.imageDataToWebGLTexture(this._imageData, output.getWebGLTexture());        
+        const output = imagePool.getWebGLTexture(this.width, this.height, false, 'ImageImageData');
+        cm.imageDataToWebGLTexture(this.imageData, output.getWebGLTexture());
 
         return output;
     }
-    
-    
-    getImageData(): ImageData
+
+    public getImageData(): ImageData
     {
-        return this._imageData;
+        return this.imageData;
     }
-    
-    
-    getUint8ClampedArray(): Uint8ClampedArray
+
+    public getUint8ClampedArray(): Uint8ClampedArray
     {
-        return this._imageData.data;
+        return this.imageData.data;
     }
-    
-    getUint8Array(): Uint8Array
+
+    public getUint8Array(): Uint8Array
     {
-        if(this._uint8Array === null)
-            this._uint8Array = new Uint8Array(this._imageData.data.buffer);
-        return this._uint8Array;
+        if (this.uint8Array === null) {
+            this.uint8Array = new Uint8Array(this.imageData.data.buffer);
+        }
+        return this.uint8Array;
     }
-    
-    drawToContext2D(context: CanvasRenderingContext2D): void
+
+    /**
+     * Draw the image onto a 2d canvas.
+     */
+    public drawToContext2D(context: CanvasRenderingContext2D): void
     {
-        context.putImageData(this._imageData, 0, 0);
+        context.putImageData(this.imageData, 0, 0);
     }
 }

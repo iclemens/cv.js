@@ -37,7 +37,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                 var reference = Rx.Observable.create(function(observer) {
                     $.get(referenceFile).then(function(result) {
                         observer.next(result);
-                        observer.completed();
+                        observer.complete();
                     }, function(ajax, error) {
                         observer.error("Error loading reference data: " + error);
                     });
@@ -47,7 +47,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                     var features = input[0];
                     var reference = input[1];
 
-                    if(mask == 8) console.log(S, T, features);
+                    //if(mask == 8) console.log(S, T, features);
 
                     // Compare results
                     assert.equal(features.length, reference.length, 'Number of detected features is correct (' + features.length + ')');
@@ -84,7 +84,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                 (function(threshold) {
                     //QUnit.module("{F,AG}AST 16-9");
                     QUnit.test("FAST 16-9 T" + threshold, function(assert) {
-                        console.log("Passing", threshold);
+                        // console.log("Passing", threshold);
                         test_fast_private(assert, 9, 16, threshold, false, "fast"); 
                     });
                     

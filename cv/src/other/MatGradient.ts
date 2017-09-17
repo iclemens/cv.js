@@ -1,16 +1,17 @@
 // Matlab compatible gradient
-import {Filter, ShaderInfo} from '../core/Filter'
-import {Image} from '../core/Image'
-import {ImageImageData} from '../core/ImageImageData'
-import {ImagePool, ImagePoolInterface} from '../core/ImagePool'
+import {Filter, IShaderInfo} from '../core/Filter';
+import {Image} from '../core/Image';
+import {ImageImageData} from '../core/ImageImageData';
+import {ImagePool} from '../core/ImagePool';
+import {ImagePoolInterface} from '../core/ImagePoolInterface';
 
 export class MatGradient extends Filter
 {
-    protected shaders: ShaderInfo[] = [
-        { 
-            vertexFiles: ['shaders/default.vert.c'], 
-            fragmentFiles: ['shaders/gradient.frag.c']
-        }
+    protected shaders: IShaderInfo[] = [
+        {
+            fragmentFiles: ['shaders/gradient.frag.c'],
+            vertexFiles: ['shaders/default.vert.c'],
+        },
     ];
 
 
@@ -19,8 +20,8 @@ export class MatGradient extends Filter
         super();
         this.setupShaders();
     }
-    
-    
+
+
     matGradient(image: Image): Image
     {
         var input = image.asWebGLTexture();

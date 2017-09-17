@@ -7,20 +7,20 @@ import {Observer} from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 
 import {Image, Keypoint} from '@iclemens/cv';
-import * as CV from '@iclemens/cv';
+import {CascadeInterface, HaarClassifier as CVHaarClassifier, HaarClassifierShader} from '@iclemens/cv';
 
 /**
  * Converts an RGB color image to grayscale using a normal function.
  */
 export class HaarClassifier
 {
-    private haarClassifier: CV.HaarClassifier = undefined;
-    private haarClassifierShader: CV.HaarClassifierShader = undefined;
+    private haarClassifier: CVHaarClassifier = undefined;
+    private haarClassifierShader: HaarClassifierShader = undefined;
 
 
-    constructor(cascade: CV.CascadeInterface)
+    constructor(cascade: CascadeInterface)
     {
-        this.haarClassifier = new CV.HaarClassifier(cascade);
+        this.haarClassifier = new CVHaarClassifier(cascade);
         // this._haarClassifierShader = new CV.HaarClassifierShader();
     }
 

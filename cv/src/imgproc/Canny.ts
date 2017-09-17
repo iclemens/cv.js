@@ -1,50 +1,56 @@
-import {Filter, ShaderInfo} from '../core/Filter'
-import {Image} from '../core/Image'
-import {ImagePool} from '../core/ImagePool'
-import {Sobel} from './Sobel'
-import {ComputeManager, ComputeManagerInterface} from '../core/ComputeManager'
+import {ComputeManager} from '../core/ComputeManager';
+import {IComputeManagerInterface} from '../core/ComputeManagerInterface';
+import {Filter, IShaderInfo} from '../core/Filter';
+import {Image} from '../core/Image';
+import {ImagePool} from '../core/ImagePool';
+import {Sobel} from './Sobel';
 
 export class Canny extends Filter
 {
-  protected shaders: ShaderInfo[] = [
-    { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/canny.frag.c']}, 
+  protected shaders: IShaderInfo[] = [
+    { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/canny.frag.c']},
     { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/canny_hist.frag.c']}];
 
-  
+
   constructor()
   {
-    super();    
+    super();
     this.setupShaders();
   }
-  
-  
-  canny(image: Image, lowThreshold: number, highThreshold: number, apertureSize?: number, L2gradient?: boolean): Image
+
+
+  public canny(image: Image, lowThreshold: number, highThreshold: number,
+               apertureSize?: number, L2gradient?: boolean): Image
   {
-    if(this.programs[0] === null || this.programs[1] === null)
-      throw "Could not apply Canny filter, shaders have not been loaded.";
+    if (this.programs[0] === null || this.programs[1] === null) {
+      throw new Error('Could not apply Canny filter, shaders have not been loaded.');
+    }
 
-    if(apertureSize === undefined)
+    if (apertureSize === undefined) {
       apertureSize = 1;
-      
-    if(L2gradient === undefined)
-      L2gradient = true;
-    
-    // Make sure the parameters are correct
-    if(!(apertureSize in [-1, 0, 1, 3, 5, 7]))
-      throw "Invalid aperature size.";
+    }
 
-    if(lowThreshold > highThreshold) {
-      var tmp = highThreshold;
+    if (L2gradient === undefined) {
+      L2gradient = true;
+    }
+
+    // Make sure the parameters are correct
+    if (!(apertureSize in [-1, 0, 1, 3, 5, 7])) {
+      throw new Error('Invalid aperature size.');
+    }
+
+    if (lowThreshold > highThreshold) {
+      const tmp = highThreshold;
       highThreshold = lowThreshold;
       lowThreshold = tmp;
     }
 
-    var texture = image.asWebGLTexture();
+    const texture = image.asWebGLTexture();
 
-    var imagePool = ImagePool.getInstance();
-    var output0 = imagePool.getWebGLTexture(image.width, image.height, true);
-    var output1 = imagePool.getWebGLTexture(image.width, image.height, true);
-    
+    const imagePool = ImagePool.getInstance();
+    const output0 = imagePool.getWebGLTexture(image.width, image.height, true);
+    const output1 = imagePool.getWebGLTexture(image.width, image.height, true);
+
     this.computeManager.activateShader(this.programs[0], image.width, image.height);
     this.computeManager.setShaderInput(0, texture.getWebGLTexture());
     this.computeManager.setShaderOutput(output0.getWebGLFrameBuffer());
@@ -61,7 +67,7 @@ export class Canny extends Filter
     this.computeManager.setUniformf(this.programs[1], 'pixelSize', image.getPixelSize());
     this.computeManager.runShader();
     output0.release();
-    
+
     return output1;
   }
 }

@@ -1,2 +1,1 @@
-
-export * from './CanvasSink'
+export {CanvasSink} from './CanvasSink';

@@ -19,10 +19,10 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
         
         var reference = Rx.Observable.create(function(observer) {
             $.get(referenceFile).then(function(result) {
-                observer.onNext(result);
-                observer.onCompleted();
+                observer.next(result);
+                observer.complete();
             }, function(ajax, error) {
-                observer.onError("Error loading reference: " + error);
+                observer.error("Error loading reference: " + error);
             });
         });
         

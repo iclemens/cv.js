@@ -1,26 +1,25 @@
-import {Image} from "../core/Image"
-import {GrayscaleShader} from "./GrayscaleShader"
-import {GrayscaleSoftware} from "./GrayscaleSoftware"
+import {Image} from '../core/Image';
+import {GrayscaleShader} from './GrayscaleShader';
+import {GrayscaleSoftware} from './GrayscaleSoftware';
 
-interface GrayscaleInterface
+interface IGrayscaleInterface
 {
-    grayscale(image: Image)
+    grayscale(image: Image);
 }
 
 export class Grayscale
 {
-    //private _scale: ScaleShader;
-    private _grayscale: GrayscaleInterface;
-    
-    
+    private _grayscale: IGrayscaleInterface;
+
+
     constructor()
     {
         this._grayscale = new GrayscaleShader();
-        //this._scale = new ScaleSoftware();
+        // this._scale = new ScaleSoftware();
     }
-    
-    
-    grayscale(image: Image): Image
+
+
+    public grayscale(image: Image): Image
     {
         return this._grayscale.grayscale(image);
     }

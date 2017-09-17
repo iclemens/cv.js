@@ -1,6 +1,5 @@
-import * as CV from "@iclemens/cv"
-import {Observable} from 'rxjs/Observable'
-import {Observer} from 'rxjs/Observer'
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 
 /**
  * Source that produces a mediastream once subscribed to.
@@ -12,14 +11,15 @@ export class MediaStreamSource
      */
     public Source(stream?: MediaStream, constraints?: MediaStreamConstraints): Observable<MediaStream>
     {
-        if(constraints === undefined)
+        if (constraints === undefined) {
             constraints = { video: true };
+        }
 
-        if(stream === undefined) {
+        if (stream === undefined) {
             return Observable.create((observer: Observer<MediaStream>) => {
-                navigator.mediaDevices.getUserMedia(constraints).then( 
-                    (stream: MediaStream) => {
-                        observer.next(stream);
+                navigator.mediaDevices.getUserMedia(constraints).then(
+                    (str: MediaStream) => {
+                        observer.next(str);
                     }, (error: MediaStreamError) => {
                         observer.error(error);
                     });
@@ -29,5 +29,5 @@ export class MediaStreamSource
                 observer.next(stream);
             });
         }
-    } 
+    }
 }

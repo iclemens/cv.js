@@ -1,25 +1,25 @@
-import {Image} from '../core/Image'
-import {ImagePool} from '../core/ImagePool'
+import {Image} from '../core/Image';
+import {ImagePool} from '../core/ImagePool';
 
 /**
  * Fallback implementation in case shaders are not present
  */
 export class ScaleSoftware
 {
-    scale(image: Image, width: number, height: number): Image
+    public scale(image: Image, width: number, height: number): Image
     {
-        var imagePool = ImagePool.getInstance();
-        
+        const imagePool = ImagePool.getInstance();
+
         // Convert to pixels and create output data
-        var input = image.asImageData();
-        var inputPixels = input.getImageData().data;
-        var output = imagePool.getImageData(width, height);
-        var outputPixels = output.getImageData().data;
-        
-        var lineOffset = width * 4;
-        
-        var area = (image.height / height) * (image.width / width);
-                    
+        const input = image.asImageData();
+        const inputPixels = input.getImageData().data;
+        const output = imagePool.getImageData(width, height);
+        const outputPixels = output.getImageData().data;
+
+        const lineOffset = width * 4;
+
+        const area = (image.height / height) * (image.width / width);
+
         // Loop over all output pixels
         for(var y = 0; y < height; y++) {
 
@@ -27,10 +27,10 @@ export class ScaleSoftware
             var y1_in = y0_in + image.height / height;
 
             for(var x = 0; x < width; x++) {
-                var off_out = (y * width + x) * 4;
+                const off_out = (y * width + x) * 4;
                 
                 // Maps to input pixels
-                var x0_in = x / width * image.width;                    
+                var x0_in = x / width * image.width;
                 var x1_in = x0_in + image.width / width;
                 
                 var values = [0, 0, 0, 0];

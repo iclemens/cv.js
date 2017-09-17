@@ -1,6 +1,6 @@
 {
   "name": "@iclemens/rxcv",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Computer Vision Library - Reactive Extensions",
   "main": "dist/RxCV.js",
   "typings": "dist/RxCV.d.ts",
@@ -16,7 +16,7 @@
     "definition": "dist/RxCV.d.ts"
   },
   "devDependencies": {
-    "@iclemens/cv": "^0.1.3",
+    "@iclemens/cv": "^0.1.5",
     "http-server": "^0.9.0",
     "typedoc": "^0.5.0",
     "rxjs": "^5.4.3"
@@ -26,7 +26,7 @@
     "webrtc-adapter": "^2.0.4"
   },
   "peerDependencies": {
-    "@iclemens/cv": "^0.1.3",    
+    "@iclemens/cv": "^0.1.5",    
     "rxjs": "^5.4.3"
   }
 }

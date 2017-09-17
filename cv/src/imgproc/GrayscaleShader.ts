@@ -1,11 +1,11 @@
-import {Filter, ShaderInfo} from '../core/Filter'
-import {Image} from "../core/Image"
+import {Filter, IShaderInfo} from '../core/Filter';
+import {Image} from '../core/Image';
 
 
 export class GrayscaleShader extends Filter
 {
-    protected shaders: ShaderInfo[] = [
-        { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/grayscale.frag.c'] }    
+    protected shaders: IShaderInfo[] = [
+        { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/grayscale.frag.c'] },
     ];
 
 
@@ -16,14 +16,14 @@ export class GrayscaleShader extends Filter
     }
 
 
-    grayscale(image: Image): Image
+    public grayscale(image: Image): Image
     {
-        var input = image.asWebGLTexture();
-        var output = this.runShader(0, input, null);
-        
+        const input = image.asWebGLTexture();
+        const output = this.runShader(0, input, null);
+
         image.release();
         input.release();
-        
+
         return output;
     }
 }

@@ -4,17 +4,17 @@ import {Observer} from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 
 import {Image, Keypoint} from '@iclemens/cv';
-import * as CV from '@iclemens/cv';
+import {Scale as CVScale} from '@iclemens/cv';
 
 export class Scale
 {
-    private _scale: CV.Scale;
+    private scale: CVScale;
     private _scaleH: number;
     private _scaleV: number;
 
     constructor()
     {
-        this._scale = new CV.Scale();
+        this.scale = new CVScale();
     }
 
     get scaleH(): number { return this._scaleH; }
@@ -45,7 +45,7 @@ export class Scale
             const w = Math.floor(input.width * this._scaleH);
             const h = Math.floor(input.height * this._scaleH);
 
-            return this._scale.scale(input, w, h);
+            return this.scale.scale(input, w, h);
         });
     }
 }

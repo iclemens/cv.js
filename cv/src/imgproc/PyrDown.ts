@@ -1,11 +1,11 @@
-import {Filter, ShaderInfo} from '../core/Filter';
-import {Image} from "../core/Image"
+import {Filter, IShaderInfo} from '../core/Filter';
+import {Image} from '../core/Image';
 
 
 export class PyrDown extends Filter
 {
-    protected shaders: ShaderInfo[] = [
-        { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/pyrdown.frag.c']}  
+    protected shaders: IShaderInfo[] = [
+        { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/pyrdown.frag.c']},
     ];
 
     constructor()

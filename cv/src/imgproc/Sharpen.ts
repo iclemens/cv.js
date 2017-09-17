@@ -1,5 +1,5 @@
 
-import {Image} from "../core/Image"
+import {Image} from '../core/Image';
 
 export class Sharpen
 {

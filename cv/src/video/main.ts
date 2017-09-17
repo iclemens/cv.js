@@ -1,1 +1,1 @@
-export * from "./LK"
+export * from './LK';

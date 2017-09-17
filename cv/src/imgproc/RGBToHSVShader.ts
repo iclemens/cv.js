@@ -1,11 +1,11 @@
-import {Filter, ShaderInfo} from '../core/Filter'
-import {Image} from '../core/Image'
+import {Filter, IShaderInfo} from '../core/Filter';
+import {Image} from '../core/Image';
 
 
 export class RGBToHSVShader extends Filter
 {
-    protected shaders: ShaderInfo[] = [
-        { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/rgbtohsv.frag.c'] }    
+    protected shaders: IShaderInfo[] = [
+        { vertexFiles: ['shaders/default.vert.c'], fragmentFiles: ['shaders/rgbtohsv.frag.c'] },
     ];
 
 
@@ -16,14 +16,14 @@ export class RGBToHSVShader extends Filter
     }
 
 
-    rgbToHSV(image: Image): Image
+    public rgbToHSV(image: Image): Image
     {
-        var input = image.asWebGLTexture();
-        var output = this.runShader(0, input, null);
-        
+        const input = image.asWebGLTexture();
+        const output = this.runShader(0, input, null);
+
         image.release();
         input.release();
-        
+
         return output;
     }
 }

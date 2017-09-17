@@ -4,27 +4,27 @@
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 
-import {Image, Keypoint} from '@iclemens/cv'
-import * as CV from "@iclemens/cv"
+import {Image, Keypoint} from '@iclemens/cv';
+import {Grayscale as CVGrayscale} from '@iclemens/cv';
 
 /**
  * Converts an RGB color image to grayscale using a normal function.
  */
 export class Grayscale
 {
-    private _grayscale: CV.Grayscale;    
-    
+    private grayscale: CVGrayscale;
+
     constructor()
     {
-        this._grayscale = new CV.Grayscale();
+        this.grayscale = new CVGrayscale();
     }
-    
-    
-    Process(source: Observable<Image>): Observable<Image> {
+
+
+    public Process(source: Observable<Image>): Observable<Image> {
         return source.map((input: Image) => {
-            return this._grayscale.grayscale(input);
+            return this.grayscale.grayscale(input);
         });
     }
 }

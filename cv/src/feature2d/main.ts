@@ -1,3 +1,3 @@
-export * from "./FAST"
-export * from "./AGAST"
-export * from "./BRISK"
+export * from './FAST';
+export * from './AGAST';
+export * from './BRISK';

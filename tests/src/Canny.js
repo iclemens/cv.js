@@ -20,25 +20,9 @@ define(['QUnit', 'tests/Utilities', '@iclemens/cv', '@iclemens/rxcv', 'rxjs'], f
                 canny.highThreshold = 200.0;
                 var cannyImage = canny.Process(originalImage);
                 
-                /*var div = document.createElement("div");
-                div.style.position = 'absolute';
-                div.style.top = 0.0;
-                document.body.appendChild(div);
-                
-                var canvasses = [];
-                var sinks = [];
-                for(var q = 0; q < 2; q++) {
-                    canvasses[q] = document.createElement("canvas");
-                    div.appendChild(canvasses[q]);
-                    sinks[q] = new RxCV.CanvasSink();
-                    sinks[q].element = canvasses[q];
-                }
-                sinks[0].Process(cannyImage).subscribe(function() { });
-                sinks[1].Process(referenceImage).subscribe(function() { });*/
-                
                 Rx.Observable.combineLatest([referenceImage, cannyImage]).subscribe(function(images) {
-                    var original = images[1].asPixelData();
-                    var reference = images[0].asPixelData();
+                    var original = images[1].asImageData().getImageData();
+                    var reference = images[0].asImageData().getImageData();
 
                     assert.notEqual(images[1], undefined, "Original image");
                     assert.notEqual(images[0], undefined, "Reference image"); 
