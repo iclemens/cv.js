@@ -1,6 +1,6 @@
 {
   "name": "@iclemens/cv",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Computer Vision Library",
   "main": "dist/CV.js",
   "typings": "dist/CV.d.ts",

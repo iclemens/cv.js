@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     shaders: {
       base: 'src/data',
       src: {
-        files: { '../core/StoredFiles.ts': ['shaders/**/*.c'] }
+        files: { '../core/StoredFiles.ts': ['shaders/*.c', 'shaders/lib/*.c'] }
       },
     },
     
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
   
   function generateStoredFile(filename) {
     var contents = grunt.file.read(filename);
-    var string = jsesc(contents, { 'quotes': 'double', 'wrap': true });
+    var string = jsesc(contents, { 'quotes': 'single', 'wrap': true });
     return string;
   }
   
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
     var oldBase = process.cwd();
     grunt.file.setBase(base);
     
-    var storedFiles = "export var storedFiles = {\n";
+    var storedFiles = "export const storedFiles = {\n";
     
     for(var outputFile in files) {
       var inputFiles = grunt.file.expand(files[outputFile]);
@@ -38,8 +38,8 @@ module.exports = function(grunt) {
       for(var i = 0; i < inputFiles.length; i++) {
         var filename = inputFiles[i];
         
-        storedFiles += "\t" + jsesc(inputFiles[i], { 'quotes': 'double', 'wrap': true }) + ": " +
-          generateStoredFile(inputFiles[i]) + ", \n\n";
+        storedFiles += "\t" + jsesc(inputFiles[i], { 'quotes': 'single', 'wrap': true }) + ": " +
+          generateStoredFile(inputFiles[i]) + ", \n";
       }
     }
     
