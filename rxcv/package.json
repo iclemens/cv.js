@@ -1,22 +1,21 @@
 {
   "name": "@iclemens/rxcv",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Computer Vision Library - Reactive Extensions",
-  "main": "dist/RxCV.js",
-  "typings": "dist/RxCV.d.ts",
+  "main": "RxCV.js",
+  "typings": "RxCV.d.ts",
   "repository": "https://github.com/iclemens/cv.js.git",
   "scripts": {
-    "preinstall": "",
-    "postinstall": "",
-    "prepublish": "tsc"
+    "copypackage": "node src/scripts/copy-package.js",
+    "build": "tsc && npm run copypackage"
   },
   "author": "Ivar Clemens",
   "license": "SEE LICENSE IN LICENSE",
   "typescript": {
-    "definition": "dist/RxCV.d.ts"
+    "definition": "RxCV.d.ts"
   },
   "devDependencies": {
-    "@iclemens/cv": "^0.1.5",
+    "@iclemens/cv": "^0.1.7",
     "http-server": "^0.9.0",
     "typedoc": "^0.5.0",
     "rxjs": "^5.4.3"
@@ -26,7 +25,7 @@
     "webrtc-adapter": "^2.0.4"
   },
   "peerDependencies": {
-    "@iclemens/cv": "^0.1.5",    
+    "@iclemens/cv": "^0.1.7",    
     "rxjs": "^5.4.3"
   }
 }
