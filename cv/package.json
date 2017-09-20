@@ -2,25 +2,24 @@
   "name": "@iclemens/cv",
   "version": "0.1.7",
   "description": "Computer Vision Library",
-  "main": "CV.js",
-  "typings": "CV.d.ts",
+  "main": "index.js",
+  "typings": "index.d.ts",
   "repository": "https://github.com/iclemens/cv.js.git",
   "scripts": {
     "copypackage": "node src/scripts/copy-package.js",
-    "build": "tsc && npm run copypackage"
+    "build": "tsc && npm run copypackage",
+    "link": "npm run copypackage && cd dist && npm link --only=production"
   },
   "author": "Ivar Clemens",
   "license": "SEE LICENSE IN LICENSE",
   "typescript": {
-    "definition": "CV.d.ts"
+    "definition": "index.d.ts"
   },
   "devDependencies": {
     "glslmin": "0.0.0",
     "grunt": "^1.0.1",
     "grunt-contrib-uglify": "^1.0.1",
-    "jsesc": "^1.0.0"
-  },
-  "dependencies": {
+    "jsesc": "^1.0.0",
     "sax": "^1.2.1",
     "typedoc": "^0.5.0"
   }

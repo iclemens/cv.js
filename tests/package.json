@@ -4,7 +4,7 @@
   "description": "",
   "main": "bug.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "link": "npm link @iclemens/cv && npm link @iclemens/rxcv"
   },
   "author": "",
   "license": "ISC",

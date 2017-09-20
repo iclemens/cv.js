@@ -4,7 +4,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/observable/combineLatest';
 
 import { Image } from '@iclemens/cv';
-import { CameraCapture } from '@iclemens/rxcv';
+import { fromCamera } from '@iclemens/rxcv';
 import { CanvasSink } from '@iclemens/rxcv';
 
 declare function algorithm0(pointCloud);
@@ -12,16 +12,13 @@ declare function widestGap(M);
 declare function mSegmentation(M, w);
 declare function triangulate(pointCloud);
 
-
-const cameraCapture = new CameraCapture();
-
 // Request image width following specifications
 const constraints: MediaStreamConstraints = {
     video: { width: 640 },
 };
 
 // Open camera and grayscale image
-const cameraSource = cameraCapture.Source(undefined, constraints).share();
+const cameraSource = fromCamera(constraints).share();
 
 // Setup contexts for feature overlays
 const featureCanvasIds = ['features'];
@@ -39,11 +36,12 @@ const video_canvas_sinks = [];
 const video_canvases = [];
 
 for (let i = 0; i < videoCanvasIds.length; i++) {
-    video_canvas_sinks[i] = new CanvasSink();
-    video_canvas_sinks[i].element = document.getElementById(videoCanvasIds[i]);
+    video_canvas_sinks[i] = new CanvasSink(document.getElementById(videoCanvasIds[i]) as HTMLCanvasElement);
 }
 
-video_canvas_sinks[0].Process(cameraSource).subscribe(() => {
+cameraSource.subscribe(video_canvas_sinks[0]);
+
+cameraSource.subscribe(() => {
     feature_canvases[0].width = video_canvas_sinks[0].element.width;
     feature_canvases[0].height = video_canvas_sinks[0].element.height;
 });

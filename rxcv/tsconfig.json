@@ -11,6 +11,6 @@
     },
 
     "files": [
-        "src/RxCV.ts"
+        "src/index.ts"
     ]   
 }

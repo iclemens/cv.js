@@ -1,0 +1,68 @@
+
+<!--
+    Converting textures to pixels (or rendering them to canvasses) will fail in case the canvas is updated just after the conversion is initiated. To reproduce:
+
+ - Load two images
+ - Create textures from images
+ - Draw texture #1 to canvas
+ - Read pixels
+ - Draw texture #2 to canvas
+ - Read pixels
+ - Compare results
+ -->
+
+<html>
+    <head>
+        <style>
+            #webgl_canvas {
+                border: 1px solid blue;
+            }
+        </style>
+        
+        <script src="bug.js"></script>
+    </head>
+    <body>
+        <img id="img1" src="reference/img1.png" width="100">
+        <img id="img2" src="reference/img1.grayscale.png" width="100"><br />
+        <button id="setup">Setup WebGL</button>
+        <button id="update">Update</button></br >
+        <canvas id="webgl_canvas"></canvas>
+        
+        <script>
+            var canvas = document.getElementById('webgl_canvas');
+            var context = canvas.getContext('experimental-webgl');
+            
+            var img1 = document.getElementById('img1');
+            var img2 = document.getElementById('img2');
+            
+            var program;
+            var texture1, texture2;
+            
+            var setupButton = document.getElementById('setup');
+            setupButton.onclick = function()
+            {
+                texture1 = setupTexture(context, img1);
+                texture2 = setupTexture(context, img2);
+                program = setupProgram(context);
+            }
+            
+            var updateButton = document.getElementById('update');
+            updateButton.onclick = function() {
+                canvas.width = img1.width;
+                canvas.height = img1.height;
+                
+                var buffer1 = new Uint8Array(img1.width * img1.height * 4);
+                var buffer2 = new Uint8Array(img1.width * img1.height * 4);
+                
+                drawTexture(context, img1.width, img1.height, texture1);
+                context.readPixels(0, 0, img1.width, img1.height, context.RGBA, context.UNSIGNED_BYTE, buffer1);
+                drawTexture(context, img2.width, img2.height, texture2);
+                context.readPixels(0, 0, img1.width, img1.height, context.RGBA, context.UNSIGNED_BYTE, buffer2);                
+                console.log(buffer1);
+                console.log(buffer2);
+            }
+            
+            console.log(context);
+        </script>
+    </body>
+</html>

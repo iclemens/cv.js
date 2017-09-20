@@ -1,5 +1,5 @@
 export {CanvasSink} from './dom/CanvasSink';
-export {CameraCapture} from './vision/CameraCapture';
+export {fromMediaStream, fromCamera} from './vision/CameraCapture';
 export {LoadImage} from './vision/LoadImage';
 export {MediaStreamSource} from './vision/MediaStreamSource';
 

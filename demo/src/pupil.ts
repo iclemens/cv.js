@@ -1,12 +1,14 @@
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/share';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/sample';
+
 import 'rxjs/add/observable/interval';
 
-import { Image } from '@iclemens/cv'
-import { CameraCapture } from '@iclemens/rxcv'
-import { CanvasSink } from '@iclemens/rxcv'
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/sample';
+import 'rxjs/add/operator/share';
+
+import { Image } from '@iclemens/cv';
+import { fromCamera } from '@iclemens/rxcv';
+import { CanvasSink } from '@iclemens/rxcv';
 
 import { ScalePyramid } from '@iclemens/cv';
 
@@ -21,85 +23,86 @@ declare function PupilDetector(CV, context): void;
 declare function FaceAndEyeDetector(CV): void;
 
 
-var retain = function(count) {
+const retain = (count: number) => {
     return function(image) {
         for(let i = 0; i < count; i++) {
             image.retain();
         }
     }
-}
+};
 
-// Setup camera    
-var cameraSource = new CameraCapture().Source().share().sample(Observable.interval(50));
+// Setup camera
+const cameraSource = fromCamera().share().sample(Observable.interval(50));
 
 // Setup contexts for feature overlays
-var feature_canvas_id = 'features';
-var feature_canvas = <HTMLCanvasElement> document.getElementById(feature_canvas_id);
-var feature_context = feature_canvas.getContext('2d');
+const feature_canvas_id = 'features';
+const feature_canvas = <HTMLCanvasElement> document.getElementById(feature_canvas_id);
+const feature_context = feature_canvas.getContext('2d');
 
 // Setup canvas for video output
-var video_canvas_id = 'video';
-var video_canvas_sink = new CanvasSink();
-var video_canvas = <HTMLCanvasElement> document.getElementById(video_canvas_id);
-video_canvas_sink.element = video_canvas;
+const video_canvas_id = 'video';
+const video_canvas = <HTMLCanvasElement> document.getElementById(video_canvas_id);
+const video_canvas_sink = new CanvasSink(video_canvas);
 
-var eyeL_canvas = <HTMLCanvasElement> document.getElementById('eyeL');
-var eyeR_canvas = <HTMLCanvasElement> document.getElementById('eyeR');
+const eyeL_canvas = <HTMLCanvasElement> document.getElementById('eyeL');
+const eyeR_canvas = <HTMLCanvasElement> document.getElementById('eyeR');
 
-var eyeL_context = eyeL_canvas.getContext('2d');
-var eyeR_context = eyeR_canvas.getContext('2d');
+const eyeL_context = eyeL_canvas.getContext('2d');
+const eyeR_context = eyeR_canvas.getContext('2d');
 
-let grayscale_image = cameraSource.split(0).do(retain(1));
+const grayscale_image = cameraSource.split(0).do(retain(1));
 
-var feDetector = new FaceAndEyeDetector(CV);
-var pDetectorL = new PupilDetector(CV, eyeL_context);
-var pDetectorR = new PupilDetector(CV, eyeR_context);
+const feDetector = new FaceAndEyeDetector(CV);
+const pDetectorL = new PupilDetector(CV, eyeL_context);
+const pDetectorR = new PupilDetector(CV, eyeR_context);
 
-grayscale_image.subscribe(function(image) {
-    var clsrects = feDetector.findFaces(image);
-    
-    if(clsrects.length == 0) {
+grayscale_image.subscribe((image: Image) => {
+    const clsrects = feDetector.findFaces(image);
+
+    if (clsrects.length === 0) {
         // Estimate location of head?
         return;
     }
 
-    // Define ROI where eyes should be        
-    var w = clsrects[0][2];
-    var h = clsrects[0][3];
-    
-    var clseyes = [[
+    // Define ROI where eyes should be
+    const w = clsrects[0][2];
+    const h = clsrects[0][3];
+
+    const clseyes = [[
         clsrects[0][0] + 0.13 * w,
         clsrects[0][1] + 0.25 * w,
         0.35 * w,
-        0.30 * h 
+        0.30 * h,
     ], [
         clsrects[0][0] + w - (0.13 + 0.35) * w,
         clsrects[0][1] + 0.25 * w,
         0.30 * w,
-        0.30 * h 
+        0.30 * h,
     ]];
-    
-    var pupilL = pDetectorL.findPupil(image, clseyes[0]);
-    var pupilR = pDetectorR.findPupil(image, clseyes[1]);
-    
+
+    const pupilL = pDetectorL.findPupil(image, clseyes[0]);
+    const pupilR = pDetectorR.findPupil(image, clseyes[1]);
+
     feature_context.clearRect(0, 0, feature_canvas.width, feature_canvas.height);
     drawRects(feature_context, clsrects, 'blue');
     drawRects(feature_context, clseyes, 'red');
-    
+
     drawCentre(feature_context, pupilL[0], pupilL[1]);
     drawCentre(feature_context, pupilR[0], pupilR[1]);
-    
+
     image.release();
 });
 
 
 // Resize canvas on new video frame
-video_canvas_sink.Process(cameraSource).subscribe(function(image) 
+cameraSource.subscribe(video_canvas_sink);
+
+cameraSource.subscribe((image: Image) =>
 {
-    if(feature_canvas.width != video_canvas_sink.element.width ||
-        feature_canvas.height != video_canvas_sink.element.height)
-    {   
+    if (feature_canvas.width !== video_canvas_sink.element.width ||
+        feature_canvas.height !== video_canvas_sink.element.height)
+    {
         feature_canvas.width = video_canvas_sink.element.width;
         feature_canvas.height = video_canvas_sink.element.height;
     }
-});       
+});

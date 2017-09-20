@@ -31,12 +31,12 @@
             ]).then((modules) => {
                 QUnit = modules[0];
 
-                //modules[1].run(); // Grayscale
-                //modules[2].run(); // Scale
-                //modules[3].run(); // FAST
-                //modules[4].run(); // BRISK
-                //modules[5].run(); // Sobel
-                //modules[6].run(); // Canny
+                modules[1].run(); // Grayscale
+                modules[2].run(); // Scale
+                modules[3].run(); // FAST
+                modules[4].run(); // BRISK
+                modules[5].run(); // Sobel
+                modules[6].run(); // Canny
                 modules[7].run(); // RGBToHSV
                 
                 QUnit.load();

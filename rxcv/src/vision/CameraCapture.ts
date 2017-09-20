@@ -6,81 +6,87 @@ import 'rxjs/add/operator/mergeMap';
 
 import {Image, ImagePool, ImagePoolInterface, Keypoint} from '@iclemens/cv';
 
+export interface ICameraCaptureOptions
+{
+    mode?: 'setInterval' | 'requestAnimationFrame';
+    frequency?: number;
+}
+
+
+function startStreaming(observer: Observer<Image>, element: HTMLVideoElement, options: ICameraCaptureOptions): void
+{
+    if (!options.mode) { options.mode = 'requestAnimationFrame'; }
+    if (!options.frequency) { options.frequency = 60.0; }
+
+    const imagePool: ImagePoolInterface = ImagePool.getInstance();
+
+    let callback: () => void;
+
+    callback = () => {
+        if (element.width === 0 || element.height === 0) {
+            return;
+        }
+
+        observer.next(
+            imagePool.getHTMLElement(element),
+        );
+
+        if (options.mode === 'requestAnimationFrame') {
+            requestAnimationFrame(callback);
+        }
+    };
+
+    if (options.mode === 'setInterval') {
+        setInterval(callback, 1000.0 / options.frequency);
+    } else if (options.mode === 'requestAnimationFrame') {
+        requestAnimationFrame(callback);
+    } else {
+        observer.error('Invalid mode: ' + options.mode);
+    }
+}
+
+
+function onStreamCallback(observer: Observer<Image>, element: HTMLVideoElement,
+                          stream: MediaStream, options: ICameraCaptureOptions)
+{
+    element.srcObject = stream;
+    element.addEventListener('playing', () => {
+        // Be compatible with image element
+        element.width = element.videoWidth;
+        element.height = element.videoHeight;
+
+        startStreaming(observer, element, options);
+    });
+    element.play();
+}
+
+
 /**
  * Capture video from camera.
  */
-export class CameraCapture
+export function fromCamera(constraints: MediaStreamConstraints = { video: true },
+                           options: ICameraCaptureOptions = {}): Observable<Image>
 {
-    public startStreaming(observer: Observer<Image>, element: HTMLVideoElement): void
-    {
-        const freq = 60.0;
-        const imagePool: ImagePoolInterface = ImagePool.getInstance();
+    return Observable.create((observer: Observer<Image>) => {
+        const element: HTMLVideoElement = document.createElement('video');
 
-        setInterval(() => {
-            if (element.width === 0 || element.height === 0) {
-                return;
-            }
-
-            observer.next(
-                imagePool.getHTMLElement(element),
-            );
-        }, 1000.0 / freq);
-    }
-
-
-    /**
-     * Create observable source
-     */
-    public Source(stream?: MediaStream, constraints?: MediaStreamConstraints): Observable<Image>
-    {
-        if (constraints === undefined) {
-            constraints = { video: true };
-        }
-
-        return Observable.create((observer: Observer<Image>) => {
-            // Create video element
-            const element = document.createElement('video');
-
-            const handleStream = (str: MediaStream) => {
-                const w = window as any;
-
-                // const url: URL = w.URL || w.webkitURL;
-                // const src = url?(<any> url).createObjectURL(stream):stream;
-                // element.src = src;
-
-                element.srcObject = str;
-                element.addEventListener('playing', () => {
-                    // Be compatible with image element
-                    element.width = element.videoWidth;
-                    element.height = element.videoHeight;
-
-                    this.startStreaming(observer, element);
-                });
-                element.play();
-            };
-
-            // Connect to source
-            if (stream === undefined) {
-                navigator.mediaDevices.getUserMedia(constraints).then(
-                    handleStream.bind(this),
-                    (error: MediaStreamError) => {
-                        observer.error(error);
-                    });
-            } else {
-                handleStream(stream);
-            }
+        navigator.mediaDevices.getUserMedia(constraints).then(
+            (stream) => onStreamCallback(observer, element, stream, options),
+            (error: MediaStreamError) => {
+                observer.error(error);
+            });
         });
-    }
+}
 
-
-    /**
-     * Takes an observable that produces streams and returns
-     *  an observable that produces frames from those streams.
-     */
-    public Process(source: Observable<MediaStream>): Observable<Image>
-    {
-        return source.mergeMap((stream) => {
-            return this.Source(stream);
-        });
-    }
+/**
+ * Capture video from mediastream.
+ */
+export function fromMediaStream(stream: MediaStream,
+                                options: ICameraCaptureOptions = {}): Observable<Image>
+{
+    return Observable.create((observer: Observer<Image>) => {
+        // Create video element
+        const element: HTMLVideoElement = document.createElement('video');
+        onStreamCallback(observer, element, stream, options);
+    });
 }

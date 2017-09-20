@@ -9,8 +9,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
         originalImage.url = "reference/lab.grayscale.png";
         const originalImage$ = originalImage.Generate();
 
-        var canvasSink = new RxCV.CanvasSink();
-        canvasSink.element = document.getElementById('output');
+        var canvasSink = new RxCV.CanvasSink(document.getElementById('output'));
 
         const brisk$ = originalImage$.brisk(50.0, octave);
         

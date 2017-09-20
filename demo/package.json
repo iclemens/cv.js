@@ -4,16 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "link": "npm link @iclemens/cv && npm link @iclemens/rxcv"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@iclemens/cv": "^0.1.5",
+    "@iclemens/cv": "^0.1.7",
     "@iclemens/rxcv": "^0.2.0",
     "http-server": "^0.10.0",
     "jquery": "^3.1.1",
-    "rxjs": "5.4.3",
+    "rxjs": "^5.4.3",
     "systemjs": "^0.20.12"
   }
 }

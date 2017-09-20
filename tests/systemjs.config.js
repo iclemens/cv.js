@@ -4,34 +4,26 @@
   var map = {
     'tests': 'src',
 
-    'es6-promise':                'node_modules/es6-promise/dist/es6-promise.js',
-    'rxjs':                       'npm:rxjs',
-    'QUnit':                      'npm:qunitjs',
-    'heatmap':                    'node_modules/heatmap.js/heatmap.js',
+    'rxjs':  'npm:rxjs',
+    'QUnit': 'npm:qunitjs',
 
     'jquery':                     'node_modules/jquery/dist',
 
-    '@iclemens/stompjs':        'node_modules/@iclemens/stompjs',
-    '@iclemens/cv':             'node_modules/@iclemens/cv/dist',
-    '@iclemens/rxcv':           'node_modules/@iclemens/rxcv/dist',
-    '@iclemens/eyetracker':     'node_modules/@iclemens/eyetracker/dist',
-    '@iclemens/api':            'node_modules/@iclemens/api/dist',
+    '@iclemens/cv':             'node_modules/@iclemens/cv',
+    '@iclemens/rxcv':           'node_modules/@iclemens/rxcv'
   };
 
 
   var packages = {
-    'QUnit':                    { main: 'qunit/qunit.js' },
+    'QUnit': { main: 'qunit/qunit.js' },
     
-    '@iclemens/cv':             { main: 'CV.js', defaultExtension: 'js' },
-    '@iclemens/rxcv':           { main: 'RxCV.js', defaultExtension: 'js' },
-    '@iclemens/eyetracker':     { main: 'EyeTracker.js', defaultExtension: 'js' },
-    '@iclemens/api':            { main: 'MindTrace.js', defaultExtension: 'js' },
+    '@iclemens/cv':   { main: 'index.js', defaultExtension: 'js' },
+    '@iclemens/rxcv': { main: 'index.js', defaultExtension: 'js' },
 
-    'jquery':                     { main: 'jquery.min.js' },
+    'jquery': { main: 'jquery.min.js' },
 
-    'local-messaging-client':     { main: 'messaging.js', defaultExtension: 'js' },
-    'tests':                        { defaultExtension: 'js' },
-    'rxjs':                       { main: 'Rx.js', defaultExtension: 'js' }
+    'tests': { defaultExtension: 'js' },
+    'rxjs':  { main: 'Rx.js', defaultExtension: 'js' }
   };
 
 

@@ -9,6 +9,11 @@
         "lib": ["es2015", "dom"],
         "removeComments": false,
         "noImplicitAny": false,
+        "baseUrl": "./",
+        "paths": {
+            "@iclemens/cv": [ "node_modules/@iclemens/cv"],
+            "@iclemens/rxcv": [ "node_modules/@iclemens/rxcv"]
+        },
         "typeRoots": [
             "node_modules/@types/"
         ],

@@ -1,15 +1,17 @@
-import { Observable } from 'rxjs/Observable'
-import 'rxjs/add/operator/share'
-import 'rxjs/add/operator/map'
+import { Observable } from 'rxjs/Observable';
 
-import { Image } from '@iclemens/cv'
-import { CameraCapture } from '@iclemens/rxcv'
-import { CanvasSink } from '@iclemens/rxcv'
-import { LK } from '@iclemens/cv'
-import { ScalePyramid } from '@iclemens/cv'
-import * as $ from 'jquery'
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/share';
 
-function fillPyramid(pyramid, image, Lm)
+import { Image } from '@iclemens/cv';
+import { LK } from '@iclemens/cv';
+import { ScalePyramid } from '@iclemens/cv';
+
+import { fromCamera } from '@iclemens/rxcv';
+import { CanvasSink } from '@iclemens/rxcv';
+import * as $ from 'jquery';
+
+function fillPyramid(pyramid: ScalePyramid, image: Image, Lm: number): Image[]
 {
     pyramid.buildPyramid(image, Lm);
     return pyramid.asImages();
@@ -19,21 +21,20 @@ function fillPyramid(pyramid, image, Lm)
  * Function that returns a sequence of tuples, each
  *  containing both the last and the current image tree.
  */
-function history(source: Observable<Image>)
+function history(source: Observable<Image>): Observable<Image[][]>
 {
-    var count = 0;
-    var images = [[], []];
+    let count = 0;
+    const images = [[], []];
 
-    var pyramids = [
+    const pyramids = [
         new ScalePyramid(),
-        new ScalePyramid()
+        new ScalePyramid(),
     ];
-    
-    
-    return source.map(function(current) {
-        var result = [];
-        
-        if(count == 0) {
+
+    return source.map((current) => {
+        let result: Image[][] = [];
+
+        if (count === 0) {
             images[0] = fillPyramid(pyramids[0], current, 4.0);
             count = 1;
             result = [images[1], images[0]];
@@ -42,64 +43,63 @@ function history(source: Observable<Image>)
             count = 0;
             result = [images[0], images[1]];
         }
-        
+
         return result;
     });
-} 
+}
 
-
-var cameraCapture = new CameraCapture();
 
 // Request image width following specifications
-var constraints: MediaStreamConstraints = {
-    video: { width: 640 }
+const constraints: MediaStreamConstraints = {
+    video: { width: 640 },
 };
 
 // Open camera and grayscale image
-var cameraSource = cameraCapture.Source(undefined, constraints).share();
+const cameraSource$ = fromCamera(constraints).share();
 
 // Setup contexts for feature overlays
-var feature_canvas_id = 'features';
-var feature_canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById(feature_canvas_id);
+const featureCanvasId = 'features';
+const featureCanvas: HTMLCanvasElement = document.getElementById(featureCanvasId) as HTMLCanvasElement;
 
-if(feature_canvas === undefined)
-    throw "Could not find canvas";
+if (featureCanvas === undefined) {
+    throw new Error('Could not find canvas');
+}
 
-var feature_context = feature_canvas.getContext('2d');
+const featureContext = featureCanvas.getContext('2d');
 
-if(feature_context === undefined)
-    throw "Unable to obtain 2D context"
+if (featureContext === undefined) {
+    throw new Error('Unable to obtain 2D context');
+}
 
 // Setup canvas for video output
-var video_canvas_id = 'video';
-var video_canvas_sink = new CanvasSink();
-video_canvas_sink.element = <HTMLCanvasElement> document.getElementById(video_canvas_id);
-    
-var lk = new LK(0);
+const videoCanvasId = 'video';
+const videoCanvasSink = new CanvasSink(document.getElementById(videoCanvasId) as HTMLCanvasElement);
 
-var sharedInput = cameraSource.grayscale().share();
-var currentFeatures = [];
+const lk = new LK(0);
+
+const sharedInput = cameraSource$.grayscale().share();
+let currentFeatures = [];
 
 function plot_feature(feature, color)
 {
-    feature_context.beginPath();
-    feature_context.arc(feature.x, feature.y,
+    featureContext.beginPath();
+    featureContext.arc(feature.x, feature.y,
         5.0, 0.0, 2.0 * Math.PI, false);
-    feature_context.strokeStyle = color;
-    feature_context.lineWidth = 1.0;
-    feature_context.stroke();
-    feature_context.closePath();
+    featureContext.strokeStyle = color;
+    featureContext.lineWidth = 1.0;
+    featureContext.stroke();
+    featureContext.closePath();
 }
 
 
 /**
  * The problem is that the shared input contains a sequence of the same element
  *  [element, element, element]
- * 
+ *
  * The contents of which are always the latest element. It is difficult to
  *  keep the contents over time. We therefore might want to keep the contents
  *  as a texture or as ImageData for future processing. There are two options:
- * 
+ *
  * 1) We make an operator that performs this caching step
  * 2) We generate a new input texture from the texture pool every time
  *      and .dispose() that texture after we are finished with it. This
@@ -107,31 +107,33 @@ function plot_feature(feature, color)
  *      every subscribe();
  */
 
-var pointBuffer = [];
+const pointBuffer = [];
 
-history(sharedInput).subscribe(function(images) {
-    if(currentFeatures.length < 1) 
+history(sharedInput).subscribe((images) => {
+    if (currentFeatures.length < 1) {
         return;
-    
-    var next = lk.calcOpticalFlowPyrLK(images[0], images[1], currentFeatures, 5, 3);
+    }
+
+    const next = lk.calcOpticalFlowPyrLK(images[0], images[1], currentFeatures, 5, 3);
     console.log(next.nextPts[0]);
     currentFeatures[0] = next.nextPts[0];
-    
+
     pointBuffer.push(next.nextPts[0]);
-    
-    if(pointBuffer.length > 15) pointBuffer.shift();
-    
-    feature_context.clearRect(0, 0, feature_canvas.width, feature_canvas.height);
-    
-    for(var i = 0; i < pointBuffer.length; i++)
-        plot_feature(pointBuffer[i], '#0000FF');
+
+    if (pointBuffer.length > 15) { pointBuffer.shift(); }
+
+    featureContext.clearRect(0, 0, featureCanvas.width, featureCanvas.height);
+
+    for (const point of pointBuffer) {
+        plot_feature(point, '#0000FF');
+    }
 });
 
 /*
 Rx.Observable.zip(sharedInput.skip(1), sharedInput).subscribe(function(images) {
-    if(currentFeatures.length < 1) 
+    if(currentFeatures.length < 1)
         return;
-    
+
     try {
         var next = lk.calcOpticalFlowPyrLK([images[0]], [images[1]], currentFeatures, 5, 3);
         plot_feature(next.nextPts[0], '#0000FF');
@@ -141,29 +143,26 @@ Rx.Observable.zip(sharedInput.skip(1), sharedInput).subscribe(function(images) {
 });
 */
 
-feature_canvas.addEventListener('click', function(event) {
+featureCanvas.addEventListener('click', (event) => {
     /**
      * This resets the feature, but should
      * add to the list instead.
      */
-    var offset = $(feature_canvas).offset();
-    
-    currentFeatures = [{ 
+    const offset = $(featureCanvas).offset();
+
+    currentFeatures = [{
         x: event.pageX - offset.left,
-        y: event.pageY - offset.top
+        y: event.pageY - offset.top,
     }];
-    
+
     plot_feature(currentFeatures[0], '#FF0000');
 });
-
-
-
 
 
 /* brisk.Process(sharedInput).subscribe(function(f) {
     if(currentFeatures.length == 0)
         return;
-    
+
     /** Plot current feature *
     console.log(feature_context, currentFeatures);
     feature_context.beginPath();
@@ -178,14 +177,16 @@ feature_canvas.addEventListener('click', function(event) {
 /** LK should have two inputs:
  *   1) image
  *   2) features
- * 
+ *
  * Based on the image in frame n - 1
  */
 
-video_canvas_sink.Process(cameraSource).subscribe(function() {
-    if(feature_canvas.width != video_canvas_sink.element.width ||
-        feature_canvas.height != video_canvas_sink.element.height) {
-        feature_canvas.width = video_canvas_sink.element.width;
-        feature_canvas.height = video_canvas_sink.element.height;
-    }        
-});   
+cameraSource$.subscribe(videoCanvasSink);
+
+cameraSource$.subscribe(() => {
+    if (featureCanvas.width !== videoCanvasSink.element.width ||
+        featureCanvas.height !== videoCanvasSink.element.height) {
+        featureCanvas.width = videoCanvasSink.element.width;
+        featureCanvas.height = videoCanvasSink.element.height;
+    }
+});

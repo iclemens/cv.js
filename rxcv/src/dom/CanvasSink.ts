@@ -1,5 +1,6 @@
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
+import {Subscriber} from 'rxjs/Subscriber';
 
 import 'rxjs/add/operator/do';
 
@@ -8,35 +9,28 @@ import {Image} from '@iclemens/cv';
 /**
  * Sink that renders an image onto a canvas.
  */
-export class CanvasSink
+export class CanvasSink extends Subscriber<Image>
 {
-    public element: HTMLCanvasElement = undefined;
     private context2D: CanvasRenderingContext2D = undefined;
 
-    constructor()
+    constructor(public element: HTMLCanvasElement)
     {
+        super();
+        this.context2D = this.element.getContext('2d');
     }
 
-    public Process(source: Observable<Image>): any
+    protected _next(image: Image)
     {
-        this.context2D = this.element.getContext('2d');
+        if (this.element === undefined) {
+            return;
+        }
 
-        return Observable.create((observer: Observer<Image>) => {
-            const process = source.do((image: Image) => {
-                if (this.element === undefined) {
-                    return;
-                }
+        if (this.element.width !== image.width || this.element.height !== image.height) {
+            this.element.width = image.width;
+            this.element.height = image.height;
+        }
 
-                if (this.element.width !== image.width || this.element.height !== image.height) {
-                    this.element.width = image.width;
-                    this.element.height = image.height;
-                }
-
-                image.drawToContext2D(this.context2D);
-                image.release();
-            }).subscribe(observer);
-
-            return () => {};
-        });
+        image.drawToContext2D(this.context2D);
+        image.release();
     }
 }

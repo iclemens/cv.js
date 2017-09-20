@@ -12,6 +12,6 @@
 
     "files": [
         "typings/index.d.ts",
-        "src/CV.ts"
+        "src/index.ts"
     ]   
 }

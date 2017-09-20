@@ -3,68 +3,65 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/share';
 
 import { Image } from '@iclemens/cv';
-import { CameraCapture } from '@iclemens/rxcv';
+import { fromCamera } from '@iclemens/rxcv';
 import { CanvasSink } from '@iclemens/rxcv';
 
-
-// Input and transform objects
-var cameraCapture = new CameraCapture();
-
 // Request image width following specifications
-var constraints: MediaStreamConstraints = {
-    video: { width: 640 }
+const constraints: MediaStreamConstraints = {
+    video: { width: 640 },
 };
 
 // Open camera and grayscale image
-var cameraSource = cameraCapture.Source(undefined, constraints).share();
-var sharedInput: Observable<Image> = cameraSource.grayscale().share();
+const camera$ = fromCamera(constraints).share();
+const sharedInput: Observable<Image> = camera$.grayscale().share();
 
 // Setup contexts for feature overlays
-var feature_canvas_ids = ['features'];
-var feature_canvases = [];
-var feature_contexts = [];
+const featureCanvasIds = ['features'];
+const featureCanvases = [];
+const featureContexts = [];
 
-for(var i = 0; i < feature_canvas_ids.length; i++) {
-    feature_canvases.push(document.getElementById(feature_canvas_ids[i]));
-    feature_contexts.push(feature_canvases[i].getContext("2d"));
+for (let i = 0; i < featureCanvasIds.length; i++) {
+    featureCanvases.push(document.getElementById(featureCanvasIds[i]));
+    featureContexts.push(featureCanvases[i].getContext('2d'));
 }
 
 // Setup canvas for video output
-var video_canvas_ids = ['video'];
-var video_canvas_sinks = [];
-var video_canvases = [];
+const videoCanvasIds = ['video', 'video2'];
+const videoCanvasSinks: CanvasSink[] = [];
 
-for(var i = 0; i < video_canvas_ids.length; i++) {
-    video_canvas_sinks[i] = new CanvasSink();
-    video_canvas_sinks[i].element = document.getElementById(video_canvas_ids[i]);
+for (const id of videoCanvasIds) {
+    videoCanvasSinks.push(new CanvasSink(document.getElementById(id) as HTMLCanvasElement));
 }
 
+camera$.subscribe(videoCanvasSinks[0]);
+
 // Make feature canvas the same size as the video canvas
-video_canvas_sinks[0].Process(cameraSource).subscribe(function() {
-    feature_canvases[0].width = video_canvas_sinks[0].element.width;
-    feature_canvases[0].height = video_canvas_sinks[0].element.height;
+camera$.subscribe(() => {
+    featureCanvases[0].width = videoCanvasSinks[0].element.width;
+    featureCanvases[0].height = videoCanvasSinks[0].element.height;
 });
 
 // Setup scaled versions of pipeline
-for(var i = 0; i < 1; i++) {
-    (function() {
-        var scaleFactor = 1.0 / Math.pow(2.0, i);
-        
-        var scaledInput = sharedInput.scale(scaleFactor);  
-        
-        sharedInput.fast(50.0, 5.0).subscribe(function(f) {          
-            for(var i = 0; i < f.length; i++) {
-                feature_contexts[0].beginPath();
-                feature_contexts[0].arc(f[i].x / scaleFactor, f[i].y / scaleFactor, 5, 0, 2.0 * Math.PI, false);
-                feature_contexts[0].lineWidth = 1;
-                
-                if(scaleFactor == 1.0)
-                    feature_contexts[0].strokeStyle = 'red';
-                else
-                    feature_contexts[0].strokeStyle = 'blue';
-                feature_contexts[0].stroke();
-            }            
+for (let i = 1; i < 2; i++) {
+    (() => {
+        const scaleFactor = 1.0 / Math.pow(2.0, i);
+
+        const scaledInput = sharedInput.scale(scaleFactor);
+
+        scaledInput.fast(undefined, 50.0, 5.0).subscribe((f) => {
+            for (const j of f) {
+                featureContexts[0].beginPath();
+                featureContexts[0].arc(j.x / scaleFactor, j.y / scaleFactor, 5, 0, 2.0 * Math.PI, false);
+                featureContexts[0].lineWidth = 1;
+
+                if (scaleFactor === 1.0) {
+                    featureContexts[0].strokeStyle = 'red';
+                } else {
+                    featureContexts[0].strokeStyle = 'blue';
+                }
+                featureContexts[0].stroke();
+            }
         });
-    
-    }());
+
+    })();
 }
