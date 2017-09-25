@@ -1,6 +1,6 @@
 {
   "name": "@iclemens/cv",
-  "version": "0.1.7",
+  "version": "0.3.0",
   "description": "Computer Vision Library",
   "main": "index.js",
   "typings": "index.d.ts",
@@ -8,7 +8,8 @@
   "scripts": {
     "copypackage": "node src/scripts/copy-package.js",
     "build": "tsc && npm run copypackage",
-    "link": "npm run copypackage && cd dist && npm link --only=production"
+    "link": "npm run copypackage && cd dist && npm link --only=production",
+    "publish-pkg": "npm run build && cd dist && npm publish"
   },
   "author": "Ivar Clemens",
   "license": "SEE LICENSE IN LICENSE",
