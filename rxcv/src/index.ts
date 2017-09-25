@@ -1,7 +1,7 @@
 export {CanvasSink} from './dom/CanvasSink';
 export {fromMediaStream, fromCamera} from './vision/CameraCapture';
 export {LoadImage} from './vision/LoadImage';
-export {MediaStreamSource} from './vision/MediaStreamSource';
+export {mediaStreamFromCamera} from './vision/MediaStream';
 
 import './vision/AGAST';
 import './vision/Blur';
