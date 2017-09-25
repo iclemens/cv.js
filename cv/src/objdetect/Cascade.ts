@@ -1,12 +1,12 @@
 
 export interface StageInterface
 {
-    thresholds: Float64Array
-    rects: Int32Array
+    thresholds: Float64Array;
+    rects: Int32Array;
 }
 
 export interface CascadeInterface
 {
-    size: number[]
+    size: number[];
     stages: StageInterface[];
 }

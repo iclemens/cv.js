@@ -160,8 +160,6 @@ export class HaarClassifier
         }
         if (stepY === undefined) { stepY = stepX; }
 
-        // console.log("Scale:", this._scale);
-
         // Loop over all pixels and apply cascade
         const ii: IntegralImage = this._integralImage;
         const Nstages: number = this._stages.length;
