@@ -13,7 +13,8 @@ export class CanvasSink extends Subscriber<Image>
 {
     private context2D: CanvasRenderingContext2D = undefined;
 
-    constructor(public element: HTMLCanvasElement)
+    constructor(public element: HTMLCanvasElement,
+                private afterUpdate?: (image: Image, context: CanvasRenderingContext2D) => void)
     {
         super();
         this.context2D = this.element.getContext('2d');
@@ -31,6 +32,11 @@ export class CanvasSink extends Subscriber<Image>
         }
 
         image.drawToContext2D(this.context2D);
+
+        if (this.afterUpdate) {
+            this.afterUpdate(image, this.context2D);
+        }
+
         image.release();
     }
 }
