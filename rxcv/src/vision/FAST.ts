@@ -1,27 +1,10 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import {FAST as CVFAST} from '@iclemens/cv';
 
-
-Observable.prototype.fast = fast;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      fast: typeof fast;
-    }
-}
-
-export function fast(this: Observable<Image>, mask?: number, threshold?: number,
-                     S?: number, nms?: boolean, subpixel?: boolean): Observable<Keypoint[]> {
-    return this.lift(new FASTOperator(mask, threshold, S, nms, subpixel));
-}
+export const fast = (mask?: number, threshold?: number, S?: number, nms?: boolean, subpixel?: boolean) => 
+    (source: Observable<Image>): Observable<Keypoint[]> => 
+        source.lift(new FASTOperator(mask, threshold, S, nms, subpixel));
 
 class FASTOperator implements Operator<Image, Keypoint[]>
 {

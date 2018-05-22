@@ -1,9 +1,4 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Subscriber} from 'rxjs/Subscriber';
-
-import 'rxjs/add/operator/do';
-
+import {Observable, Observer, Subscriber} from 'rxjs';
 import {Image} from '@iclemens/cv';
 
 /**

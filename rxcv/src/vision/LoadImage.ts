@@ -1,9 +1,4 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-
-import 'rxjs/add/observable/defer';
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, defer} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import * as CV from '@iclemens/cv';
 
@@ -40,7 +35,7 @@ export function LoadImage()
     this.Generate = function(source: any): Observable<Image>
     {
         if (source === undefined) {
-            return Observable.defer(() => {
+            return defer(() => {
                 return this.CreateImage();
             });
         } else {

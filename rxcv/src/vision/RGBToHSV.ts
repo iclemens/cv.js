@@ -1,28 +1,12 @@
 /**
  * Converts a color image to HSV.
  */
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import {RGBToHSV as CVRGBToHSV} from '@iclemens/cv';
 
-export function rgbToHSV(this: Observable<Image>): Observable<Image> {
-    return this.lift(new RGBToHSVOperator());
-}
-
-Observable.prototype.rgbToHSV = rgbToHSV;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-        rgbToHSV: typeof rgbToHSV;
-    }
-}
+export const rgbToHSV = () => (source: Observable<Image>): Observable<Image> => 
+    this.lift(new RGBToHSVOperator());
 
 class RGBToHSVOperator implements Operator<Image, Image>
 {

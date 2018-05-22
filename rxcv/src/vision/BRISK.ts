@@ -1,25 +1,9 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {BRISK as CVBRISK} from '@iclemens/cv';
 import {Image, Keypoint} from '@iclemens/cv';
 
-Observable.prototype.brisk = brisk;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      brisk: typeof brisk;
-    }
-}
-
-export function brisk(this: Observable<Image>, threshold: number, octaveCount: number): Observable<Keypoint[]> {
-    return this.lift(new BRISKOperator(threshold, octaveCount));
-}
+export const brisk = (threshold: number, octaveCount: number) => (source: Observable<Image>): Observable<Keypoint[]> =>
+    source.lift(new BRISKOperator(threshold, octaveCount));
 
 class BRISKOperator implements Operator<Image, Keypoint[]>
 {

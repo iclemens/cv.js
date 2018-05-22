@@ -1,25 +1,9 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import {PyrDown as CVPyrDown} from '@iclemens/cv';
 
-export function pyrDown(this: Observable<Image>, scaleH?: number, scaleV?: number): Observable<Image> {
-    return this.lift(new PyrDownOperator(scaleH, scaleV));
-}
-
-Observable.prototype.pyrDown = pyrDown;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      pyrDown: typeof pyrDown;
-    }
-}
+export const pyrDown = (scaleH?: number, scaleV?: number) => (source: Observable<Image>): Observable<Image> =>
+    source.lift(new PyrDownOperator(scaleH, scaleV));
 
 class PyrDownOperator implements Operator<Image, Image>
 {

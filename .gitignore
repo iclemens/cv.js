@@ -59,3 +59,4 @@ cv/node_modules
 
 rxcv/dist
 rxcv/node_modules
+rxcv/package-lock.json

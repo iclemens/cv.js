@@ -1,26 +1,10 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {AGAST as CVAGAST} from '@iclemens/cv';
 import {Image, Keypoint} from '@iclemens/cv';
 
-Observable.prototype.agast = agast;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      agast: typeof agast;
-    }
-}
-
-export function agast(this: Observable<Image>, mask?: number, threshold?: number,
-                      S?: number, nms?: boolean, subpixel?: boolean): Observable<Keypoint[]> {
-    return this.lift(new AGASTOperator(mask, threshold, S, nms, subpixel));
-}
+export const agast = (mask?: number, threshold?: number,
+                      S?: number, nms?: boolean, subpixel?: boolean) => (source: Observable<Image>): Observable<Keypoint[]> => 
+    this.lift(new AGASTOperator(mask, threshold, S, nms, subpixel));
 
 class AGASTOperator implements Operator<Image, Keypoint[]>
 {

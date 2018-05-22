@@ -1,25 +1,9 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import {Canny as CVCanny} from '@iclemens/cv';
 
-export function canny(this: Observable<Image>, lowThreshold?: number, highThreshold?: number): Observable<Image> {
-    return this.lift(new CannyOperator(lowThreshold, highThreshold));
-}
-
-Observable.prototype.canny = canny;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      canny: typeof canny;
-    }
-}
+export const canny = (lowThreshold?: number, highThreshold?: number) => (source: Observable<Image>): Observable<Image> => 
+    source.lift(new CannyOperator(lowThreshold, highThreshold));
 
 class CannyOperator implements Operator<Image, Image>
 {

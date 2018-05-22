@@ -1,25 +1,12 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 
-import 'rxjs/add/operator/map';
+
 
 import {Image, Keypoint} from '@iclemens/cv';
 import {Scale as CVScale} from '@iclemens/cv';
 
-export function scale(this: Observable<Image>, scaleH?: number, scaleV?: number): Observable<Image> {
-    return this.lift(new ScaleOperator(scaleH, scaleV));
-}
-
-Observable.prototype.scale = scale;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      scale: typeof scale;
-    }
-}
+export const scale = (scaleH?: number, scaleV?: number) => (source: Observable<Image>): Observable<Image> => 
+    source.lift(new ScaleOperator(scaleH, scaleV));
 
 class ScaleOperator implements Operator<Image, Image>
 {

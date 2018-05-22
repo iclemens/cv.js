@@ -1,29 +1,12 @@
 /**
  * Converts a color image to grayscale.
  */
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import {Grayscale as CVGrayscale} from '@iclemens/cv';
 
-
-export function grayscale(this: Observable<Image>): Observable<Image> {
-    return this.lift(new GrayscaleOperator());
-}
-
-Observable.prototype.grayscale = grayscale;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-        grayscale: typeof grayscale;
-    }
-}
+export const grayscale = () => (source: Observable<Image>) => 
+    source.lift(new GrayscaleOperator());
 
 class GrayscaleOperator implements Operator<Image, Image>
 {
@@ -36,7 +19,6 @@ class GrayscaleOperator implements Operator<Image, Image>
         return source.subscribe(new GrayscaleSubscriber(subscriber));
     }
 }
-
 
 class GrayscaleSubscriber extends Subscriber<Image>
 {

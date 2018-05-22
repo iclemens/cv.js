@@ -1,29 +1,9 @@
-/**
- * Converts a color image to grayscale.
- */
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import {Split as CVSplit} from '@iclemens/cv';
 
-
-export function split(this: Observable<Image>, channel: number): Observable<Image> {
-    return this.lift(new SplitOperator(channel));
-}
-
-Observable.prototype.split = split;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      split: typeof split;
-    }
-}
+export const split = (channel: number) => (source: Observable<Image>): Observable<Image> =>
+    this.lift(new SplitOperator(channel));
 
 class SplitOperator implements Operator<Image, Image>
 {

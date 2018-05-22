@@ -1,25 +1,9 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {Operator} from 'rxjs/Operator';
-import {Subscriber} from 'rxjs/Subscriber';
-import {TeardownLogic} from 'rxjs/Subscription';
-
-import 'rxjs/add/operator/map';
-
+import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
 import {Image, Keypoint} from '@iclemens/cv';
 import {Blur as CVBlur} from '@iclemens/cv';
 
-export function blur(this: Observable<Image>): Observable<Image> {
-    return this.lift(new BlurOperator());
-}
-
-Observable.prototype.blur = blur;
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-      blur: typeof blur;
-    }
-}
+export const blur = () => (source: Observable<Image>): Observable<Image> =>
+    this.lift(new BlurOperator());
 
 class BlurOperator implements Operator<Image, Image>
 {

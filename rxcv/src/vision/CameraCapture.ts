@@ -1,8 +1,7 @@
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
+import {Observable, Observer} from 'rxjs';
 
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
+
+
 
 import {Image, ImagePool, ImagePoolInterface, Keypoint} from '@iclemens/cv';
 
