@@ -4,7 +4,7 @@ import {Image, Keypoint} from '@iclemens/cv';
 
 export const agast = (mask?: number, threshold?: number,
                       S?: number, nms?: boolean, subpixel?: boolean) => (source: Observable<Image>): Observable<Keypoint[]> => 
-    this.lift(new AGASTOperator(mask, threshold, S, nms, subpixel));
+    source.lift(new AGASTOperator(mask, threshold, S, nms, subpixel));
 
 class AGASTOperator implements Operator<Image, Keypoint[]>
 {

@@ -1,10 +1,11 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
-import 'rxjs/add/operator/share';
+import { share } from 'rxjs/operators';
 
 import { Image } from '@iclemens/cv';
 import { fromCamera } from '@iclemens/rxcv';
 import { CanvasSink } from '@iclemens/rxcv';
+import { grayscale, scale, fast } from '@iclemens/rxcv';
 
 // Request image width following specifications
 const constraints: MediaStreamConstraints = {
@@ -12,8 +13,8 @@ const constraints: MediaStreamConstraints = {
 };
 
 // Open camera and grayscale image
-const camera$ = fromCamera(constraints).share();
-const sharedInput: Observable<Image> = camera$.grayscale().share();
+const camera$ = fromCamera(constraints).pipe(share());
+const sharedInput: Observable<Image> = camera$.pipe(grayscale(), share());
 
 // Setup contexts for feature overlays
 const featureCanvasIds = ['features'];
@@ -46,9 +47,9 @@ for (let i = 1; i < 2; i++) {
     (() => {
         const scaleFactor = 1.0 / Math.pow(2.0, i);
 
-        const scaledInput = sharedInput.scale(scaleFactor);
+        const scaledInput = sharedInput.pipe(scale(scaleFactor));
 
-        scaledInput.fast(undefined, 50.0, 5.0).subscribe((f) => {
+        scaledInput.pipe(fast(undefined, 50.0, 5.0)).subscribe((f) => {
             for (const j of f) {
                 featureContexts[0].beginPath();
                 featureContexts[0].arc(j.x / scaleFactor, j.y / scaleFactor, 5, 0, 2.0 * Math.PI, false);

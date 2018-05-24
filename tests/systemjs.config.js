@@ -23,7 +23,7 @@
     'jquery': { main: 'jquery.min.js' },
 
     'tests': { defaultExtension: 'js' },
-    'rxjs':  { main: 'Rx.js', defaultExtension: 'js' }
+    'rxjs':  { main: 'index.js', defaultExtension: 'js' }
   };
 
 

@@ -35,7 +35,7 @@ export function LoadImage()
     this.Generate = function(source: any): Observable<Image>
     {
         if (source === undefined) {
-            return defer(() => {
+            return defer<Image>(() => {
                 return this.CreateImage();
             });
         } else {

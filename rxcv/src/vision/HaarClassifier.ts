@@ -6,7 +6,7 @@ import {Image, Keypoint} from '@iclemens/cv';
 import {CascadeInterface, HaarClassifier as CVHaarClassifier, HaarClassifierShader} from '@iclemens/cv';
 
 export const haarClassifier = (cascade: CascadeInterface) => (source: Observable<Image>): Observable<number[][]> =>
-    this.lift(new HaarClassifierOperator(cascade));
+    source.lift(new HaarClassifierOperator(cascade));
 
 class HaarClassifierOperator implements Operator<Image, number[][]>
 {

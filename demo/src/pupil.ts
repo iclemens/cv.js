@@ -1,14 +1,10 @@
-import { Observable } from 'rxjs/Observable';
-
-import 'rxjs/add/observable/interval';
-
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/sample';
-import 'rxjs/add/operator/share';
+import { Observable, interval } from 'rxjs';
+import { map, sample, share, tap } from 'rxjs/operators';
 
 import { Image } from '@iclemens/cv';
 import { fromCamera } from '@iclemens/rxcv';
 import { CanvasSink } from '@iclemens/rxcv';
+import { split } from '@iclemens/rxcv';
 
 import { ScalePyramid } from '@iclemens/cv';
 
@@ -32,7 +28,7 @@ const retain = (count: number) => {
 };
 
 // Setup camera
-const cameraSource = fromCamera().share().sample(Observable.interval(50));
+const cameraSource = fromCamera().pipe(share(), sample(interval(50)));
 
 // Setup contexts for feature overlays
 const feature_canvas_id = 'features';
@@ -50,7 +46,7 @@ const eyeR_canvas = <HTMLCanvasElement> document.getElementById('eyeR');
 const eyeL_context = eyeL_canvas.getContext('2d');
 const eyeR_context = eyeR_canvas.getContext('2d');
 
-const grayscale_image = cameraSource.split(0).do(retain(1));
+const grayscale_image = cameraSource.pipe(split(0), tap(retain(1)));
 
 const feDetector = new FaceAndEyeDetector(CV);
 const pDetectorL = new PupilDetector(CV, eyeL_context);

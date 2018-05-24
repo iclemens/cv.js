@@ -3,7 +3,7 @@ import {Image, Keypoint} from '@iclemens/cv';
 import {Blur as CVBlur} from '@iclemens/cv';
 
 export const blur = () => (source: Observable<Image>): Observable<Image> =>
-    this.lift(new BlurOperator());
+    source.lift(new BlurOperator());
 
 class BlurOperator implements Operator<Image, Image>
 {

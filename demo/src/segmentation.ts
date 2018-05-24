@@ -1,11 +1,11 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable, combineLatest } from 'rxjs';
 
-import 'rxjs/add/operator/share';
-import 'rxjs/add/observable/combineLatest';
+import { share, map } from 'rxjs/operators';
 
 import { Image } from '@iclemens/cv';
 import { fromCamera } from '@iclemens/rxcv';
 import { CanvasSink } from '@iclemens/rxcv';
+import { scale, grayscale, sobel } from '@iclemens/rxcv';
 
 declare function algorithm0(pointCloud);
 declare function widestGap(M);
@@ -18,7 +18,7 @@ const constraints: MediaStreamConstraints = {
 };
 
 // Open camera and grayscale image
-const cameraSource = fromCamera(constraints).share();
+const cameraSource = fromCamera(constraints).pipe(share());
 
 // Setup contexts for feature overlays
 const featureCanvasIds = ['features'];
@@ -47,10 +47,10 @@ cameraSource.subscribe(() => {
 });
 
 const featureObservables = [];
-const scale = 1.0 / 4.0;
-const inputImage: Observable<Image> = cameraSource.scale(scale).grayscale().sobel();
+const scale_factor = 1.0 / 4.0;
+const inputImage: Observable<Image> = cameraSource.pipe(scale(scale_factor), grayscale(), sobel());
 
-featureObservables[0] = inputImage.map((image): any => {
+featureObservables[0] = inputImage.pipe(map((image): any => {
     const image_data = image.asImageData();
     const data = image_data.getUint8Array();
 
@@ -61,7 +61,7 @@ featureObservables[0] = inputImage.map((image): any => {
     for (let x = 20; x < w - 20; x++) {
         for (let y = 20; y < h - 20; y++) {
             if (data[x * 4 + y * w * 4] > 100 || data[x * 4 + y * w * 4 + 1] > 100) {
-                points.push({x: x / scale, y: y / scale});
+                points.push({x: x / scale_factor, y: y / scale_factor});
             }
         }
     }
@@ -70,10 +70,10 @@ featureObservables[0] = inputImage.map((image): any => {
     image.release();
 
     return points;
-});
+}));
 
 
-Observable.combineLatest(featureObservables).subscribe((features) => {
+combineLatest(featureObservables).subscribe((features) => {
     const pointCloud = [];
 
     for (let i = 0; i < features.length; i++) {

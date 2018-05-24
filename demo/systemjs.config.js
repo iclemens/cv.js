@@ -1,6 +1,5 @@
 (function(global) {
 
-
   var map = {
     'app': 'dist',
 
@@ -11,7 +10,6 @@
     '@iclemens/rxcv': 'node_modules/@iclemens/rxcv',
   };
 
-
   var packages = {
     '@iclemens/cv':   { main: 'index.js', defaultExtension: 'js' },
     '@iclemens/rxcv': { main: 'index.js', defaultExtension: 'js' },
@@ -19,9 +17,9 @@
     'jquery': { main: 'jquery.min.js' },
 
     'app':  { defaultExtension: 'js' },
-    'rxjs': { main: 'Rx.js', defaultExtension: 'js' }
+    'rxjs': { defaultExtension: 'js', 'main': 'index.js' },
+    'rxjs/operators': { defaultExtension: 'js', 'main': 'index.js' }
   };
-
 
   var config = {
     paths: {
@@ -30,7 +28,6 @@
     map: map,
     packages: packages
   };
-
 
   System.config(config);
 

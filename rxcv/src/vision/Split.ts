@@ -3,7 +3,7 @@ import {Image, Keypoint} from '@iclemens/cv';
 import {Split as CVSplit} from '@iclemens/cv';
 
 export const split = (channel: number) => (source: Observable<Image>): Observable<Image> =>
-    this.lift(new SplitOperator(channel));
+    source.lift(new SplitOperator(channel));
 
 class SplitOperator implements Operator<Image, Image>
 {

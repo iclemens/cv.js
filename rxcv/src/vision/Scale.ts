@@ -1,7 +1,4 @@
 import {Observable, Observer, Operator, Subscriber, TeardownLogic} from 'rxjs';
-
-
-
 import {Image, Keypoint} from '@iclemens/cv';
 import {Scale as CVScale} from '@iclemens/cv';
 

@@ -28,7 +28,7 @@ define(['QUnit', 'Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], functio
 
                 var pyrdownImage = pyrLayer[pyrLayer.length - 1];
 
-                Rx.Observable.combineLatest([referenceImage, pyrdownImage]).subscribe(function(images) {
+                Rx.combineLatest([referenceImage, pyrdownImage]).subscribe(function(images) {
                     var original = images[1].asPixelData();
                     var reference = images[0].asPixelData();
 

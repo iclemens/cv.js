@@ -1,7 +1,5 @@
-import { Observable } from 'rxjs/Observable';
-
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/share';
+import { Observable } from 'rxjs';
+import { map, share } from 'rxjs/operators';
 
 import { Image } from '@iclemens/cv';
 import { LK } from '@iclemens/cv';
@@ -9,6 +7,7 @@ import { ScalePyramid } from '@iclemens/cv';
 
 import { fromCamera } from '@iclemens/rxcv';
 import { CanvasSink } from '@iclemens/rxcv';
+import { grayscale } from '@iclemens/rxcv';
 import * as $ from 'jquery';
 
 function fillPyramid(pyramid: ScalePyramid, image: Image, Lm: number): Image[]
@@ -31,7 +30,7 @@ function history(source: Observable<Image>): Observable<Image[][]>
         new ScalePyramid(),
     ];
 
-    return source.map((current) => {
+    return source.pipe(map((current) => {
         let result: Image[][] = [];
 
         if (count === 0) {
@@ -45,7 +44,7 @@ function history(source: Observable<Image>): Observable<Image[][]>
         }
 
         return result;
-    });
+    }));
 }
 
 
@@ -55,7 +54,7 @@ const constraints: MediaStreamConstraints = {
 };
 
 // Open camera and grayscale image
-const cameraSource$ = fromCamera(constraints).share();
+const cameraSource$ = fromCamera(constraints).pipe(share());
 
 // Setup contexts for feature overlays
 const featureCanvasId = 'features';
@@ -77,7 +76,7 @@ const videoCanvasSink = new CanvasSink(document.getElementById(videoCanvasId) as
 
 const lk = new LK(0);
 
-const sharedInput = cameraSource$.grayscale().share();
+const sharedInput = cameraSource$.pipe(grayscale(), share());
 let currentFeatures = [];
 
 function plot_feature(feature, color)

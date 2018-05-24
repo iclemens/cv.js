@@ -1,8 +1,4 @@
 import {Observable, Observer} from 'rxjs';
-
-
-
-
 import {Image, ImagePool, ImagePoolInterface, Keypoint} from '@iclemens/cv';
 
 export interface ICameraCaptureOptions

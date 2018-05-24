@@ -6,7 +6,7 @@ import {Image, Keypoint} from '@iclemens/cv';
 import {RGBToHSV as CVRGBToHSV} from '@iclemens/cv';
 
 export const rgbToHSV = () => (source: Observable<Image>): Observable<Image> => 
-    this.lift(new RGBToHSVOperator());
+    source.lift(new RGBToHSVOperator());
 
 class RGBToHSVOperator implements Operator<Image, Image>
 {

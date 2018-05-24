@@ -12,12 +12,14 @@ define(['QUnit', 'tests/Utilities', '@iclemens/cv', '@iclemens/rxcv', 'rxjs'],
                 referenceImage.url = imageOut;
                 const referenceImage$ = referenceImage.Generate();
 
+                console.log(RxCV);
+
                 const originalImage = new RxCV.LoadImage();
                 originalImage.url = imageIn;
                 const originalImage$ = originalImage.Generate();
-                var grayscaleImage$ = originalImage$.grayscale();
+                var grayscaleImage$ = originalImage$.pipe(RxCV.grayscale());
 
-                Rx.Observable.combineLatest([referenceImage$, grayscaleImage$]).subscribe(function(images) {                   
+                Rx.combineLatest([referenceImage$, grayscaleImage$]).subscribe(function(images) {                   
                     var originalI = images[1].asImageData();
                     var referenceI = images[0].asImageData();
 

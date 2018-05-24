@@ -31,7 +31,7 @@ define(['QUnit', 'tests/Utilities', '@iclemens/cv', '@iclemens/rxcv', 'rxjs'], f
                 previousImage = gsP.Process(previousImage);
                 currentImage = gsC.Process(currentImage);
 
-                Rx.Observable.combineLatest([previousImage, currentImage, reference]).subscribe(function(args) {
+                Rx.combineLatest([previousImage, currentImage, reference]).subscribe(function(args) {
                     var prevImg = args[0];
                     var curImg = args[1];
                     var ref = args[2];

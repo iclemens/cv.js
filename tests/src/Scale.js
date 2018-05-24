@@ -14,9 +14,9 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                 originalImage.url = "reference/lab.grayscale.png";
                 const originalImage$ = originalImage.Generate();
 
-                const scaleImage$ = originalImage$.scale(s, s);
+                const scaleImage$ = originalImage$.pipe(RxCV.scale(s, s));
 
-                Rx.Observable.combineLatest([referenceImage$, scaleImage$]).subscribe(function(images) {
+                Rx.combineLatest([referenceImage$, scaleImage$]).subscribe(function(images) {
                     var originalI = images[1].asImageData();
                     var referenceI = images[0].asImageData();
                     

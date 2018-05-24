@@ -3,7 +3,7 @@ import {Image, Keypoint} from '@iclemens/cv';
 import {Sobel as CVSobel} from '@iclemens/cv';
 
 export const sobel = (kSize?: number) => (source: Observable<Image>): Observable<Image> =>
-    this.lift(new SobelOperator(kSize));
+    source.lift(new SobelOperator(kSize));
 
 class SobelOperator implements Operator<Image, Image>
 {

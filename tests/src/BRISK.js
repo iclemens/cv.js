@@ -11,7 +11,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
 
         var canvasSink = new RxCV.CanvasSink(document.getElementById('output'));
 
-        const brisk$ = originalImage$.brisk(50.0, octave);
+        const brisk$ = originalImage$.pipe(RxCV.brisk(50.0, octave));
         
         const reference$ = Rx.Observable.create(function(observer) {
             $.get(referenceFile).then(function(result) {
@@ -22,7 +22,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
             });
         });
         
-        Rx.Observable.combineLatest([brisk$, reference$]).subscribe(function(input) {
+        Rx.combineLatest([brisk$, reference$]).subscribe(function(input) {
             console.log("Got: ", input);
             var features = input[0];
             var reference = input[1];

@@ -23,9 +23,9 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                 let fast$;
 
                 if(method == "fast") {
-                    fast$ = originalImage$.fast(mask, T, S, nonmax, false);
+                    fast$ = originalImage$.pipe(RxCV.fast(mask, T, S, nonmax, false));
                 } else if(method == "agast") {
-                    fast$ = originalImage$.agast(mask, T, S, nonmax, false);
+                    fast$ = originalImage$.pipe(RxCV.agast(mask, T, S, nonmax, false));
                 }
                 
                 const reference$ = Rx.Observable.create(function(observer) {
@@ -37,7 +37,7 @@ define(['QUnit', 'tests/Utilities', 'rxjs', '@iclemens/cv', '@iclemens/rxcv'], f
                     });
                 });
                 
-                Rx.Observable.combineLatest([fast$, reference$]).subscribe(function(input) {
+                Rx.combineLatest([fast$, reference$]).subscribe(function(input) {
                     var features = input[0];
                     var reference = input[1];
 
